@@ -9,6 +9,7 @@ import com.fate.file.parse.processor.FileProcessor;
 import com.fate.file.parse.processor.LineProcessor;
 import com.fate.file.parse.steerable.FieldSpecification;
 import com.fate.log.ParserLogger;
+import com.github.junrar.Junrar;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
-import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
@@ -33,11 +34,25 @@ public class SteerableParserIntegratorTest {
 
 //        AccaUtils.parser("D_IP_OPRA", "ACCA_OPRA_D", jdbcTemplate, parserlogMapper);
 //        AccaUtils.parser("D_IP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper);
-//        AccaUtils.parser("M_DP_TAX", "ACCA_TAX_DP", jdbcTemplate, parserlogMapper);
+        AccaUtils.parser("M_DP_TAX", "ACCA_TAX_DP", jdbcTemplate, parserlogMapper);
+//          AccaUtils.parser("D_DP_UPL", "ACCA_UPL", jdbcTemplate, parserlogMapper);
+    }
 
+    @Test
+    public void testUnrar() throws Exception{
+        String filePath = "C:\\Users\\T440\\Desktop\\beans\\acca\\D_DP_UPL_20190401.rar";
+        Junrar.extract(filePath, "C:\\Users\\T440\\Desktop\\beans\\unzip");
+    }
 
-        SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, "D_DP_UPL").logMapper(parserlogMapper);
-        integrator.unrarFile(false);
+    @Test
+    public void testPa() throws Exception{
+        String filePath = "C:\\Users\\T440\\Desktop\\beans\\unzip\\D_DP_UPL_20190401.csv";
+        FileProcessor.getInstance().process(new File(filePath), new LineProcessor() {
+            @Override
+            public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
+                System.out.println(line);
+            }
+        });
     }
 
     @Test
@@ -71,13 +86,12 @@ public class SteerableParserIntegratorTest {
     public void testParser() throws Exception {
         SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, "M_IP_SAL");
         final SteerableParserIntegrator.Insert config = integrator.new Insert("ACCA_SAL");
-        final ReuseList<List<FieldSpecification>> reuseList = config.getBatchInsert();
-
+        final ReuseList<Map<String, FieldSpecification>> reuseList = config.getBatchInsert();
         LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
             @Override
             public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
-                List<FieldSpecification> specifications = AccaUtils.splitBySpacer(line, config.getFieldSpecification());
-                reuseList.add(specifications);
+//                AccaUtils.splitBySpacer(line, config.getFieldSpecification());
+//                reuseList.add(specifications);
             }
         };
         FileProcessor.getInstance().process("C:\\Users\\T440\\Desktop\\beans\\unzip\\M_IP_SAL_201907_20190811.csv", lineProcessor);
@@ -88,12 +102,12 @@ public class SteerableParserIntegratorTest {
     public void testParseNoLog() throws Exception {
         SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, "M_DP_SAL");
         final SteerableParserIntegrator.Insert config = integrator.new Insert("ACCA_SAL");
-        final ReuseList<List<FieldSpecification>> reuseList = config.getBatchInsert();
+        final ReuseList<Map<String, FieldSpecification>> reuseList = config.getBatchInsert();
         LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
             @Override
             public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
-                List<FieldSpecification> specifications = AccaUtils.splitBySpacer(line, config.getFieldSpecification());
-                reuseList.add(specifications);
+//                List<FieldSpecification> specifications = AccaUtils.splitBySpacer(line, config.getFieldSpecification());
+//                reuseList.add(specifications);
             }
         };
         integrator.parseNoLog("C:\\Users\\T440\\Desktop\\beans\\unzip", lineProcessor);

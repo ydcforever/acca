@@ -8,8 +8,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -57,8 +56,8 @@ public final class DBSteerableConfig extends AbstractSteerableConfig {
     }
 
     @Override
-    public List<FieldSpecification> loadTableStruct(String contextName) {
-        final List<FieldSpecification> list = new ArrayList<>();
+    public Map<String, FieldSpecification> loadTableStruct(String contextName) {
+        final Map<String, FieldSpecification> map = new LinkedHashMap<>();
         jdbcTemplate.query(QUERY_PARSER_CONFIG, new Object[]{contextName}, new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
@@ -66,14 +65,14 @@ public final class DBSteerableConfig extends AbstractSteerableConfig {
                     FieldSpecification field = new FieldSpecification(rs.getString(1),
                             rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5),
                             rs.getInt(6), rs.getInt(7), rs.getInt(8));
-                    list.add(field);
+                    map.put(rs.getString(1), field);
                 } while (rs.next());
             }
         });
-        return list;
+        return map;
     }
 
-    public ReuseList<List<FieldSpecification>> createReuseList(String tableName, int batchSize) {
+    public ReuseList<Map<String, FieldSpecification>> createReuseList(String tableName, int batchSize) {
         return createReuseList(jdbcTemplate, tableName, batchSize);
     }
 }

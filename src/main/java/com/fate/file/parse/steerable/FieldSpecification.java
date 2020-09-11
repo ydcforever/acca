@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 public final class FieldSpecification implements Serializable, Cloneable{
 
+    private static final String DEFAULT_TYPE = "S";
     /**
      * 表列名
      */
@@ -57,13 +58,19 @@ public final class FieldSpecification implements Serializable, Cloneable{
      */
     private String val;
 
+    /**
+     * 是否自定义对象
+     * 不参与解析填充
+     */
+    private boolean define = false;
+
     public FieldSpecification() {
     }
 
     public FieldSpecification(String col, String val) {
         this.col = col;
         this.val = val;
-        this.type = "S";
+        this.type = DEFAULT_TYPE;
     }
 
     public FieldSpecification(String col, String val, String type) {
@@ -167,6 +174,24 @@ public final class FieldSpecification implements Serializable, Cloneable{
         this.val = value[this.pos - 1];
     }
 
+    public FieldSpecification define(String col) {
+        this.col = col;
+        this.type = DEFAULT_TYPE;
+        this.define = true;
+        return this;
+    }
+
+    public FieldSpecification define(String col, String type) {
+        this.col = col;
+        this.type = type;
+        this.define = true;
+        return this;
+    }
+
+    public boolean isDefine() {
+        return define;
+    }
+
     @Override
     public String toString() {
         return "FieldSpecification{" +
@@ -174,6 +199,10 @@ public final class FieldSpecification implements Serializable, Cloneable{
                 ", type='" + type + '\'' +
                 ", val='" + val + '\'' +
                 '}';
+    }
+
+    public void clear() {
+        this.val = "";
     }
 
     public FieldSpecification clone() {

@@ -1,7 +1,10 @@
 package com.btw.parser.util;
 
 import com.btw.parser.mapper.ParserLogMapper;
-import com.fate.decompress.*;
+import com.fate.decompress.DecompressFactory;
+import com.fate.decompress.DecompressFile;
+import com.fate.decompress.ReaderHandler;
+import com.fate.decompress.UnrarFile;
 import com.fate.file.parse.DBSteerableConfig;
 import com.fate.file.parse.batch.ReuseList;
 import com.fate.file.parse.processor.FileProcessor;
@@ -10,13 +13,13 @@ import com.fate.file.parse.processor.LineProcessor;
 import com.fate.file.parse.steerable.FieldSpecification;
 import com.fate.file.transfer.FileSelector;
 import com.fate.log.ParserLoggerProxy;
+import com.github.junrar.Junrar;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -90,17 +93,17 @@ public class SteerableParserIntegrator {
         ftpFactory.download(fileSelector);
     }
 
+    //------------------------------group 1 start--------------------------------
     public void unrarFile(boolean delete) throws Exception {
         File[] files = new File(saveDir).listFiles();
         if (files != null) {
             Arrays.sort(files);
-            DecompressFile unrarFile = new UnrarFile("GBK");
             for (File file : files) {
                 if(!file.isDirectory()) {
                     String name = file.getName();
                     String order = fileSelector.getOrder(name);
                     if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
-                        unrarFile.doWith(file, this.unzipDir + File.separator + name.replace("rar", "csv"), new NormalReaderHandler());
+                        Junrar.extract(file.getPath(), this.unzipDir);
                         if (delete) {
                             file.delete();
                         }
@@ -109,6 +112,30 @@ public class SteerableParserIntegrator {
             }
         }
     }
+
+    public <T> void parse(LineProcessor<T> lineProcessor, boolean delete) throws Exception{
+        parse(this.unzipDir, lineProcessor, delete);
+    }
+
+    public <T> void parse(String dir, LineProcessor<T> lineProcessor, boolean delete) throws Exception{
+        File[] files = new File(dir).listFiles();
+        assert files != null;
+        for (File file : files) {
+            String name = file.getName();
+            String order = fileSelector.getOrder(name);
+            if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
+                IFileProcessor fileProcessor = new ParserLoggerProxy(logMapper, this.fileType, name, FileProcessor.getInstance()).getTarget();
+                fileProcessor.process(file, lineProcessor, 0, null);
+//                config.updateOrder(fileType, order);
+                if (delete) {
+                    file.delete();
+                }
+            }
+        }
+    }
+    //-----------------------------------group 1 end--------------------------------
+
+
 
     public void unrarNoFile(ReaderHandler handler) throws Exception {
         unrarNoFile(handler, true);
@@ -132,27 +159,6 @@ public class SteerableParserIntegrator {
                     if (delete) {
                         file.delete();
                     }
-                }
-            }
-        }
-    }
-
-    public <T> void parse(LineProcessor<T> lineProcessor, boolean delete) throws Exception{
-        parse(this.unzipDir, lineProcessor, delete);
-    }
-
-    public <T> void parse(String dir, LineProcessor<T> lineProcessor, boolean delete) throws Exception{
-        File[] files = new File(dir).listFiles();
-        assert files != null;
-        for (File file : files) {
-            String name = file.getName();
-            String order = fileSelector.getOrder(name);
-            if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
-                IFileProcessor fileProcessor = new ParserLoggerProxy(logMapper, this.fileType, name, FileProcessor.getInstance()).getTarget();
-                fileProcessor.process(file, lineProcessor, 0, null);
-                config.updateOrder(fileType, order);
-                if (delete) {
-                    file.delete();
                 }
             }
         }
@@ -213,7 +219,7 @@ public class SteerableParserIntegrator {
 
         private String tableName;
 
-        private List<FieldSpecification> specifications;
+        private Map<String, FieldSpecification> specifications;
 
         public Insert() {
             this.tableName = config.queryTableName(fileType, fileType);
@@ -225,20 +231,20 @@ public class SteerableParserIntegrator {
             this.specifications = config.loadTableStruct(contextName);
         }
 
-        public ReuseList<List<FieldSpecification>> getBatchInsert() {
+        public ReuseList<Map<String, FieldSpecification>> getBatchInsert() {
             return getBatchInsert(500);
         }
 
-        public ReuseList<List<FieldSpecification>> getBatchInsert(int batchSize) {
+        public ReuseList<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {
             return config.createReuseList(tableName, batchSize);
         }
 
-        public void insertOne(List<FieldSpecification> fieldSpecifications) throws DataAccessException {
+        public void insertOne(Map<String, FieldSpecification> fieldSpecifications) throws DataAccessException {
             String sql = config.insertSqlGenerator(tableName, fieldSpecifications);
             jdbcTemplate.update(sql);
         }
 
-        public void insertOneWithUpdate(List<FieldSpecification> fieldSpecifications) throws DataAccessException {
+        public void insertOneWithUpdate(Map<String, FieldSpecification> fieldSpecifications) throws DataAccessException {
             String sql = config.insertSqlGenerator(tableName, fieldSpecifications);
             try {
                 jdbcTemplate.update(sql);
@@ -248,7 +254,7 @@ public class SteerableParserIntegrator {
             }
         }
 
-        public List<FieldSpecification> getFieldSpecification() {
+        public Map<String, FieldSpecification> getFieldSpecification() {
             return specifications;
         }
     }

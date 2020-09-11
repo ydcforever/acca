@@ -5,6 +5,7 @@ import com.fate.file.parse.batch.ReuseList;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -19,12 +20,12 @@ public abstract class AbstractSteerableConfig {
 
     public abstract void updateOrder(String fileType, String order);
 
-    public abstract List<FieldSpecification> loadTableStruct(String contextName);
+    public abstract  Map<String, FieldSpecification> loadTableStruct(String contextName);
 
-    public ReuseList<List<FieldSpecification>> createReuseList(final JdbcTemplate jdbcTemplate, String tableName, int batchSize) {
-        BatchInsertDB<List<FieldSpecification>> insertDB = new BatchInsertDB<List<FieldSpecification>>() {
+    public ReuseList<Map<String, FieldSpecification>> createReuseList(final JdbcTemplate jdbcTemplate, String tableName, int batchSize) {
+        BatchInsertDB<Map<String, FieldSpecification>> insertDB = new BatchInsertDB<Map<String, FieldSpecification>>() {
             @Override
-            public boolean doWith(String tableName, List<List<FieldSpecification>> list) {
+            public boolean doWith(String tableName, List<Map<String, FieldSpecification>> list) {
                 try {
                     String sql = batchInsertGenerator(tableName, list);
                     jdbcTemplate.update(sql);
@@ -35,27 +36,28 @@ public abstract class AbstractSteerableConfig {
                 return false;
             }
         };
-        return new ReuseList<List<FieldSpecification>>(tableName, insertDB, batchSize);
+        return new ReuseList<Map<String, FieldSpecification>>(tableName, insertDB, batchSize);
     }
 
-    public String batchInsertGenerator(String tableName, List<List<FieldSpecification>> rows) {
+    public String batchInsertGenerator(String tableName, List<Map<String, FieldSpecification>> rows) {
         StringBuilder insert = new StringBuilder("INSERT ALL");
-        for(List<FieldSpecification> row : rows) {
+        for(Map<String, FieldSpecification> row : rows) {
             insert.append(insertOneGenerator(tableName, row));
         }
         insert.append("SELECT 1 FROM DUAL");
         return insert.toString();
     }
 
-    public String insertSqlGenerator(String tableName, List<FieldSpecification> row) {
+    public String insertSqlGenerator(String tableName, Map<String, FieldSpecification> row) {
         return "INSERT" + insertOneGenerator(tableName, row);
     }
 
-    private String insertOneGenerator(String tableName, List<FieldSpecification> row) {
+    private String insertOneGenerator(String tableName, Map<String, FieldSpecification> row) {
         StringBuilder colBuilder = new StringBuilder();
         StringBuilder valBuilder = new StringBuilder();
         int i = 0;
-        for (FieldSpecification field : row) {
+        Collection<FieldSpecification> collection = row.values();
+        for (FieldSpecification field : collection) {
             String val = field.getVal();
             if(val != null && !"".equals(val.trim())){
                 if (i > 0) {
@@ -73,12 +75,13 @@ public abstract class AbstractSteerableConfig {
                 " VALUES (" + valBuilder.toString() + ") ";
     }
 
-    public String updateSqlGenerator(String tableName, List<FieldSpecification> row) {
+    public String updateSqlGenerator(String tableName, Map<String, FieldSpecification> row) {
         StringBuilder setBuilder = new StringBuilder(" set ");
         StringBuilder whereBuilder = new StringBuilder(" where ");
         int ki = 0;
         int vi = 0;
-        for (FieldSpecification field : row) {
+        Collection<FieldSpecification> collection = row.values();
+        for (FieldSpecification field : collection) {
             String kv = field.getKv();
             if("K".equals(kv)) {
                 if(ki > 0) {
