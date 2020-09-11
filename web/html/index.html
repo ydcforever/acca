@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="./js/jquery-1.7.2.min.js"></script>
+    <style type="text/css">
+        .close {
+            color: lightgray;
+        }
+
+        input[type='text'] {
+            width: 90px;
+        }
+    </style>
+</head>
+<body>
+<table>
+    <tr>
+        <td>M_DP_SAL</td>
+        <td><input type="text" data-begin="M_DP_SAL" placeholder="起始标志"/><input type="text" data-end="M_DP_SAL"
+                                                                                placeholder="终止标志"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_dp_sal.do" data-ref="M_DP_SAL"></td>
+        <td><input type="text" id="M_DP_SAL"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_DP_SAL" data-cron="M_DP_SAL_cron"></td>
+        <td><input type="text" id="M_DP_SAL_cron" placeholder="0 15 10 * * ?"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_DP_SAL"></td>
+
+        <td class="close">D_DP_SAL</td>
+        <td><input type="text" data-begin="D_DP_SAL"/><input type="text" data-end="D_DP_SAL"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/d_dp_sal.do" data-ref="D_DP_SAL"></td>
+        <td><input type="text" id="D_DP_SAL"/></td>
+        <td><input class="start" type="button" value="开启" data-id="D_DP_SAL" data-cron="D_DP_SAL_cron"></td>
+        <td><input type="text" id="D_DP_SAL_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="D_DP_SAL"></td>
+    </tr>
+
+    <tr>
+        <td>M_IP_SAL</td>
+        <td><input type="text" data-begin="M_IP_SAL"/><input type="text" data-end="M_IP_SAL"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_ip_sal.do" data-ref="M_IP_SAL"></td>
+        <td><input type="text" id="M_IP_SAL"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_IP_SAL" data-cron="M_IP_SAL_cron"></td>
+        <td><input type="text" id="M_IP_SAL_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_IP_SAL"></td>
+
+        <td class="close">D_IP_SAL</td>
+        <td><input type="text" data-begin="D_IP_SAL"/><input type="text" data-end="D_IP_SAL"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/d_ip_sal.do" data-ref="D_IP_SAL"></td>
+        <td><input type="text" id="D_IP_SAL"/></td>
+        <td><input class="start" type="button" value="开启" data-id="D_IP_SAL" data-cron="D_IP_SAL_cron"></td>
+        <td><input type="text" id="D_IP_SAL_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="D_IP_SAL"></td>
+    </tr>
+
+    <tr>
+        <td>M_DP_TAX</td>
+        <td><input type="text" data-begin="M_DP_TAX"/><input type="text" data-end="M_DP_TAX"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_dp_tax.do" data-ref="M_DP_TAX"></td>
+        <td><input type="text" id="M_DP_TAX"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_DP_TAX" data-cron="M_DP_TAX_cron"></td>
+        <td><input type="text" id="M_DP_TAX_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_DP_TAX"></td>
+
+        <td class="close">D_DP_TAX</td>
+        <td><input type="text" data-begin="D_DP_TAX"/><input type="text" data-end="D_DP_TAX"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/d_dp_tax.do" data-ref="D_DP_TAX"></td>
+        <td><input type="text" id="D_DP_TAX"/></td>
+        <td><input class="start" type="button" value="开启" data-id="D_DP_TAX" data-cron="D_DP_TAX_cron"></td>
+        <td><input type="text" id="D_DP_TAX_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="D_DP_TAX"></td>
+    </tr>
+
+    <tr>
+        <td>M_IP_TAX</td>
+        <td><input type="text" data-begin="M_IP_TAX"/><input type="text" data-end="M_IP_TAX"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_ip_tax.do" data-ref="M_IP_TAX"></td>
+        <td><input type="text" id="M_IP_TAX"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_IP_TAX" data-cron="M_IP_TAX_cron"></td>
+        <td><input type="text" id="M_IP_TAX_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_IP_TAX"></td>
+
+        <td class="close">D_IP_TAX</td>
+        <td><input type="text" data-begin="D_IP_TAX"/><input type="text" data-end="D_IP_TAX"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/d_ip_tax.do" data-ref="D_IP_TAX"></td>
+        <td><input type="text" id="D_IP_TAX"/></td>
+        <td><input class="start" type="button" value="开启" data-id="D_IP_TAX" data-cron="D_IP_TAX_cron"></td>
+        <td><input type="text" id="D_IP_TAX_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="D_IP_TAX"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_DP_UPL</td>
+        <td><input type="text" data-begin="M_DP_UPL"/><input type="text" data-end="M_DP_UPL"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_dp_upl.do" data-ref="M_DP_UPL"></td>
+        <td><input type="text" id="M_DP_UPL"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_DP_UPL" data-cron="M_DP_UPL_cron"></td>
+        <td><input type="text" id="M_DP_UPL_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_DP_UPL"></td>
+
+        <td class="close">D_DP_UPL</td>
+        <td><input type="text" data-begin="D_DP_UPL"/><input type="text" data-end="D_DP_UPL"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/d_dp_upl.do" data-ref="D_DP_UPL"></td>
+        <td><input type="text" id="D_DP_UPL"/></td>
+        <td><input class="start" type="button" value="开启" data-id="D_DP_UPL" data-cron="D_DP_UPL_cron"></td>
+        <td><input type="text" id="D_DP_UPL_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="D_DP_UPL"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_IP_UPL</td>
+        <td><input type="text" data-begin="M_IP_UPL"/><input type="text" data-end="M_IP_UPL"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_ip_upl.do" data-ref="M_IP_UPL"></td>
+        <td><input type="text" id="M_IP_UPL"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_IP_UPL" data-cron="M_IP_UPL_cron"></td>
+        <td><input type="text" id="M_IP_UPL_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_IP_UPL"></td>
+
+        <td class="close">D_IP_UPL</td>
+        <td><input type="text" data-begin="D_IP_UPL"/><input type="text" data-end="D_IP_UPL"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/d_ip_upl.do" data-ref="D_IP_UPL"></td>
+        <td><input type="text" id="D_IP_UPL"/></td>
+        <td><input class="start" type="button" value="开启" data-id="D_IP_UPL" data-cron="D_IP_UPL_cron"></td>
+        <td><input type="text" id="D_IP_UPL_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="D_IP_UPL"></td>
+    </tr>
+
+    <tr>
+        <td class="close">D_DP_OPRA</td>
+        <td><input type="text" data-begin="D_DP_OPRA"/><input type="text" data-end="D_DP_OPRA"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/d_dp_opra.do" data-ref="D_DP_OPRA"></td>
+        <td><input type="text" id="D_DP_OPRA"/></td>
+        <td><input class="start" type="button" value="开启" data-id="D_DP_OPRA" data-cron="D_DP_OPRA_cron"></td>
+        <td><input type="text" id="D_DP_OPRA_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="D_DP_OPRA"></td>
+
+        <td class="close">D_IP_OPRA</td>
+        <td><input type="text" data-begin="D_IP_OPRA"/><input type="text" data-end="D_IP_OPRA"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/d_ip_opra.do" data-ref="D_IP_OPRA"></td>
+        <td><input type="text" id="D_IP_OPRA"/></td>
+        <td><input class="start" type="button" value="开启" data-id="D_IP_OPRA" data-cron="D_IP_OPRA_cron"></td>
+        <td><input type="text" id="D_IP_OPRA_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="D_IP_OPRA"></td>
+    </tr>
+
+    <tr>
+        <td class="close">D_DP_PRA</td>
+        <td><input type="text" data-begin="D_DP_PRA"/><input type="text" data-end="D_DP_PRA"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/d_dp_pra.do" data-ref="D_DP_PRA"></td>
+        <td><input type="text" id="D_DP_PRA"/></td>
+        <td><input class="start" type="button" value="开启" data-id="D_DP_PRA" data-cron="D_DP_PRA_cron"></td>
+        <td><input type="text" id="D_DP_PRA_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="D_DP_PRA"></td>
+
+        <td class="close">D_IP_PRA</td>
+        <td><input type="text" data-begin="D_IP_PRA"/><input type="text" data-end="D_IP_PRA"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/d_ip_pra.do" data-ref="D_IP_PRA"></td>
+        <td><input type="text" id="D_IP_PRA"/></td>
+        <td><input class="start" type="button" value="开启" data-id="D_IP_PRA" data-cron="D_IP_PRA_cron"></td>
+        <td><input type="text" id="D_IP_PRA_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="D_IP_PRA"></td>
+    </tr>
+
+
+    <tr>
+        <td class="close">M_DP_ADM</td>
+        <td><input type="text" data-begin="M_DP_ADM"/><input type="text" data-end="M_DP_ADM"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_dp_adm.do" data-ref="M_DP_ADM"></td>
+        <td><input type="text" id="M_DP_ADM"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_DP_ADM" data-cron="M_DP_ADM_cron"></td>
+        <td><input type="text" id="M_DP_ADM_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_DP_ADM"></td>
+
+        <td class="close">M_IP_ADM</td>
+        <td><input type="text" data-begin="M_IP_ADM"/><input type="text" data-end="M_IP_ADM"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_ip_adm.do" data-ref="M_IP_ADM"></td>
+        <td><input type="text" id="M_IP_ADM"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_IP_ADM" data-cron="M_IP_ADM_cron"></td>
+        <td><input type="text" id="M_IP_ADM_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_IP_ADM"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_DP_IWB</td>
+        <td><input type="text" data-begin="M_DP_IWB"/><input type="text" data-end="M_DP_IWB"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_dp_iwb.do" data-ref="M_DP_IWB"></td>
+        <td><input type="text" id="M_DP_IWB"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_DP_IWB" data-cron="M_DP_IWB_cron"></td>
+        <td><input type="text" id="M_DP_IWB_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_DP_IWB"></td>
+
+        <td class="close">M_IP_IWB</td>
+        <td><input type="text" data-begin="M_IP_IWB"/><input type="text" data-end="M_IP_IWB"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_ip_iwb.do" data-ref="M_IP_IWB"></td>
+        <td><input type="text" id="M_IP_IWB"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_IP_IWB" data-cron="M_IP_IWB_cron"></td>
+        <td><input type="text" id="M_IP_IWB_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_IP_IWB"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_IP_MCO</td>
+        <td><input type="text" data-begin="M_IP_MCO"/><input type="text" data-end="M_IP_MCO"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_ip_mco.do" data-ref="M_IP_MCO"></td>
+        <td><input type="text" id="M_IP_MCO"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_IP_MCO" data-cron="M_IP_MCO_cron"></td>
+        <td><input type="text" id="M_IP_MCO_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_IP_MCO"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_DP_REF</td>
+        <td><input type="text" data-begin="M_DP_REF"/><input type="text" data-end="M_DP_REF"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_dp_ref.do" data-ref="M_DP_REF"></td>
+        <td><input type="text" id="M_DP_REF"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_DP_REF" data-cron="M_DP_REF_cron"></td>
+        <td><input type="text" id="M_DP_REF_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_DP_REF"></td>
+
+        <td class="close">M_IP_REF</td>
+        <td><input type="text" data-begin="M_IP_REF"/><input type="text" data-end="M_IP_REF"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_ip_ref.do" data-ref="M_IP_REF"></td>
+        <td><input type="text" id="M_IP_REF"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_IP_REF" data-cron="M_IP_REF_cron"></td>
+        <td><input type="text" id="M_IP_REF_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_IP_REF"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_DP_RFD</td>
+        <td><input type="text" data-begin="M_DP_RFD"/><input type="text" data-end="M_DP_RFD"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_dp_rfd.do" data-ref="M_DP_RFD"></td>
+        <td><input type="text" id="M_DP_RFD"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_DP_RFD" data-cron="M_DP_RFD_cron"></td>
+        <td><input type="text" id="M_DP_RFD_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_DP_RFD"></td>
+
+        <td class="close">M_IP_RFD</td>
+        <td><input type="text" data-begin="M_IP_RFD"/><input type="text" data-end="M_IP_RFD"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_ip_rfd.do" data-ref="M_IP_RFD"></td>
+        <td><input type="text" id="M_IP_RFD"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_IP_RFD" data-cron="M_IP_RFD_cron"></td>
+        <td><input type="text" id="M_IP_RFD_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_IP_RFD"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_DP_XBG</td>
+        <td><input type="text" data-begin="M_DP_XBG"/><input type="text" data-end="M_DP_XBG"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_dp_xbg.do" data-ref="M_DP_XBG"></td>
+        <td><input type="text" id="M_DP_XBG"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_DP_XBG" data-cron="M_DP_XBG_cron"></td>
+        <td><input type="text" id="M_DP_XBG_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_DP_XBG"></td>
+
+        <td class="close">M_IP_XBG</td>
+        <td><input type="text" data-begin="M_IP_XBG"/><input type="text" data-end="M_IP_XBG"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_ip_xbg.do" data-ref="M_IP_XBG"></td>
+        <td><input type="text" id="M_IP_XBG"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_IP_XBG" data-cron="M_IP_XBG_cron"></td>
+        <td><input type="text" id="M_IP_XBG_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_IP_XBG"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_MM_AGT</td>
+        <td><input type="text" data-begin="M_MM_AGT"/><input type="text" data-end="M_MM_AGT"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_mm_agt.do" data-ref="M_MM_AGT"></td>
+        <td><input type="text" id="M_MM_AGT"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_MM_AGT" data-cron="M_MM_AGT_cron"></td>
+        <td><input type="text" id="M_MM_AGT_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_MM_AGT"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_MM_CDS</td>
+        <td><input type="text" data-begin="M_MM_CDS"/><input type="text" data-end="M_MM_CDS"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_mm_cds.do" data-ref="M_MM_CDS"></td>
+        <td><input type="text" id="M_MM_CDS"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_MM_CDS" data-cron="M_MM_CDS_cron"></td>
+        <td><input type="text" id="M_MM_CDS_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_MM_CDS"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_MM_CHI</td>
+        <td><input type="text" data-begin="M_MM_CHI"/><input type="text" data-end="M_MM_CHI"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_mm_chi.do" data-ref="M_MM_CHI"></td>
+        <td><input type="text" id="M_MM_CHI"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_MM_CHI" data-cron="M_MM_CHI_cron"></td>
+        <td><input type="text" id="M_MM_CHI_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_MM_CHI"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_MM_FAB</td>
+        <td><input type="text" data-begin="M_MM_FAB"/><input type="text" data-end="M_MM_FAB"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_mm_fab.do" data-ref="M_MM_FAB"></td>
+        <td><input type="text" id="M_MM_FAB"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_MM_FAB" data-cron="M_MM_FAB_cron"></td>
+        <td><input type="text" id="M_MM_FAB_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_MM_FAB"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_MM_FLI</td>
+        <td><input type="text" data-begin="M_MM_FLI"/><input type="text" data-end="M_MM_FLI"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_mm_fli.do" data-ref="M_MM_FLI"></td>
+        <td><input type="text" id="M_MM_FLI"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_MM_FLI" data-cron="M_MM_FLI_cron"></td>
+        <td><input type="text" id="M_MM_FLI_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_MM_FLI"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_MM_PAH</td>
+        <td><input type="text" data-begin="M_MM_PAH"/><input type="text" data-end="M_MM_PAH"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_mm_pah.do" data-ref="M_MM_PAH"></td>
+        <td><input type="text" id="M_MM_PAH"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_MM_PAH" data-cron="M_MM_PAH_cron"></td>
+        <td><input type="text" id="M_MM_PAH_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_MM_PAH"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_MM_PFA</td>
+        <td><input type="text" data-begin="M_MM_PFA"/><input type="text" data-end="M_MM_PFA"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_mm_pfa.do" data-ref="M_MM_PFA"></td>
+        <td><input type="text" id="M_MM_PFA"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_MM_PFA" data-cron="M_MM_PFA_cron"></td>
+        <td><input type="text" id="M_MM_PFA_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_MM_PFA"></td>
+    </tr>
+
+    <tr>
+        <td class="close">M_MM_VCN</td>
+        <td><input type="text" data-begin="M_MM_VCN"/><input type="text" data-end="M_MM_VCN"/></td>
+        <td><input class="one" type="button" value="单次" data-url="./acca/m_mm_vcn.do" data-ref="M_MM_VCN"></td>
+        <td><input type="text" id="M_MM_VCN"/></td>
+        <td><input class="start" type="button" value="开启" data-id="M_MM_VCN" data-cron="M_MM_VCN_cron"></td>
+        <td><input type="text" id="M_MM_VCN_cron"/></td>
+        <td><input class="stop" type="button" value="停止" data-id="M_MM_VCN"></td>
+    </tr>
+</table>
+<script>
+    $(function () {
+        $(".one").each(function () {
+            var module = $(this).attr("data-ref");
+            getFlag(module);
+        });
+
+        $(".one").click(function () {
+            var id = $(this).attr("data-ref");
+            var url = $(this).attr("data-url");
+            $("#" + id).css("color", "black");
+            $("#" + id).val("开始解析");
+            var b = $("input[data-begin='" + id + "']").val();
+            var e = $("input[data-end='" + id + "']").val();
+            $.ajax({
+                type: "POST",
+                url: "./cfg/update.do",
+                data: {id: id, begin : b, end : e},
+                dataType: "json",
+                success: function () {
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        success: function () {
+                            $("#" + id).val("解析成功");
+                            getFlag(id);
+                        },
+                        error: function () {
+                            $("#" + id).css("color", "red");
+                            $("#" + id).val("解析失败");
+                        }
+                    });
+                },
+                error: function () {
+                    alert("文件选择器更新失败");
+                }
+            });
+        });
+
+        $(".start").click(function () {
+            var id = $(this).attr("data-id");
+            var cron=$("#" +$(this).attr("data-cron")).val();
+            var b = $("input[data-begin='" + id + "']").val();
+            var e = $("input[data-end='" + id + "']").val();
+            if(b != "" || e != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "./cfg/update.do",
+                    data: {id: id, begin : b, end : e},
+                    dataType: "json",
+                    success: function () {
+                        if (cron == null || cron == "") {
+                            $.ajax({
+                                type: "POST",
+                                url: './job/start.do',
+                                data : {id : id},
+                                success: function () {
+                                    alert(id + "开启定时")
+                                },
+                                error: function () {
+
+                                }
+                            });
+                        } else {
+                            $.ajax({
+                                type: "POST",
+                                url: './job/modify.do',
+                                data : {id : id, cron : cron},
+                                success: function () {
+                                    alert(id + "开启定时");
+                                },
+                                error: function () {
+
+                                }
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert("文件选择器更新失败");
+                    }
+                });
+            }
+        });
+
+        $(".stop").click(function () {
+            var id = $(this).attr("data-id");
+            $.ajax({
+                type: "POST",
+                url: './job/stop.do',
+                data : {id : id},
+                success: function () {
+                    alert(id + "定时停止");
+                },
+                error: function () {
+
+                }
+            });
+        });
+    });
+
+    function updateFlag(module, b, e){
+        if(b !== "" || e !== "") {
+            $.ajax({
+                type: "POST",
+                url: "./cfg/update.do",
+                data: {id: module, begin : b, end : e},
+                dataType: "json",
+                success: function () {
+
+                },
+                error: function () {
+                    alert("文件选择器更新失败");
+                }
+            });
+        }
+    }
+    function getFlag(module) {
+        $.ajax({
+            type: "GET",
+            url: "./cfg/query.do",
+            data: {id: module},
+            dataType: "json",
+            success: function (data) {
+                if(data != null && data != ""){
+                    $("input[data-begin='" + module + "']").val(data.BEGIN_FLAG);
+                    $("input[data-end='" + module + "']").val(data.END_FLAG);
+                }
+            },
+            error: function () {
+
+            }
+        });
+    }
+</script>
+</body>
+</html>
