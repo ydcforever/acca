@@ -1,7 +1,7 @@
 package com.fate.file.parse.steerable;
 
 import com.fate.file.parse.batch.BatchInsertDB;
-import com.fate.file.parse.batch.ReuseList;
+import com.fate.file.parse.batch.BatchPool;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -22,7 +22,7 @@ public abstract class AbstractSteerableConfig {
 
     public abstract  Map<String, FieldSpecification> loadTableStruct(String contextName);
 
-    public ReuseList<Map<String, FieldSpecification>> createReuseList(final JdbcTemplate jdbcTemplate, String tableName, int batchSize) {
+    public BatchPool<Map<String, FieldSpecification>> createBatchPool(final JdbcTemplate jdbcTemplate, String tableName, int batchSize) {
         BatchInsertDB<Map<String, FieldSpecification>> insertDB = new BatchInsertDB<Map<String, FieldSpecification>>() {
             @Override
             public boolean doWith(String tableName, List<Map<String, FieldSpecification>> list) {
@@ -36,8 +36,9 @@ public abstract class AbstractSteerableConfig {
                 return false;
             }
         };
-        return new ReuseList<Map<String, FieldSpecification>>(tableName, insertDB, batchSize);
+        return new BatchPool<>(tableName, insertDB, batchSize);
     }
+
 
     public String batchInsertGenerator(String tableName, List<Map<String, FieldSpecification>> rows) {
         StringBuilder insert = new StringBuilder("INSERT ALL");

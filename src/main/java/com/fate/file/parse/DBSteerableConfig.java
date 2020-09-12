@@ -1,6 +1,6 @@
 package com.fate.file.parse;
 
-import com.fate.file.parse.batch.ReuseList;
+import com.fate.file.parse.batch.BatchPool;
 import com.fate.file.parse.steerable.AbstractSteerableConfig;
 import com.fate.file.parse.steerable.FieldSpecification;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -72,7 +72,7 @@ public final class DBSteerableConfig extends AbstractSteerableConfig {
         return map;
     }
 
-    public ReuseList<Map<String, FieldSpecification>> createReuseList(String tableName, int batchSize) {
-        return createReuseList(jdbcTemplate, tableName, batchSize);
+    public BatchPool<Map<String, FieldSpecification>> createBatchPool(String tableName, int batchSize) {
+        return createBatchPool(jdbcTemplate, tableName, batchSize);
     }
 }

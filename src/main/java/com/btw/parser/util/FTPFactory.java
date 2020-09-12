@@ -31,7 +31,6 @@ public class FTPFactory implements InitializingBean {
         this.port = port;
         this.serverDir = serverDir;
         this.saveDir = saveDir;
-//        checkSaveDir(this.saveDir);
     }
 
     public FTPFactory(Map<String, Object> params) {
@@ -41,7 +40,6 @@ public class FTPFactory implements InitializingBean {
         this.port = Integer.parseInt(params.get("PORT").toString());
         this.serverDir = params.get("SERVER_DIR").toString();
         this.saveDir = params.get("SAVE_DIR").toString();
-//        checkSaveDir(this.saveDir);
     }
 
 

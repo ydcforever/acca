@@ -6,7 +6,7 @@ import com.fate.decompress.DecompressFile;
 import com.fate.decompress.ReaderHandler;
 import com.fate.decompress.UnrarFile;
 import com.fate.file.parse.DBSteerableConfig;
-import com.fate.file.parse.batch.ReuseList;
+import com.fate.file.parse.batch.BatchPool;
 import com.fate.file.parse.processor.FileProcessor;
 import com.fate.file.parse.processor.IFileProcessor;
 import com.fate.file.parse.processor.LineProcessor;
@@ -23,10 +23,10 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
-* Created by ydc on 2019/12/16.
-* 底层没有约束config的来源，无论是写硬码还是写配置文件或者读库都由用户决定。
-* SteerableParseIntegrator由用户自配，这里只是提供一些集成模板
-*/
+ * Created by ydc on 2019/12/16.
+ * 底层没有约束config的来源，无论是写硬码还是写配置文件或者读库都由用户决定。
+ * SteerableParseIntegrator由用户自配，这里只是提供一些集成模板
+ */
 public class SteerableParserIntegrator {
 
     private JdbcTemplate jdbcTemplate;
@@ -99,7 +99,7 @@ public class SteerableParserIntegrator {
         if (files != null) {
             Arrays.sort(files);
             for (File file : files) {
-                if(!file.isDirectory()) {
+                if (!file.isDirectory()) {
                     String name = file.getName();
                     String order = fileSelector.getOrder(name);
                     if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
@@ -113,11 +113,11 @@ public class SteerableParserIntegrator {
         }
     }
 
-    public <T> void parse(LineProcessor<T> lineProcessor, boolean delete) throws Exception{
+    public <T> void parse(LineProcessor<T> lineProcessor, boolean delete) throws Exception {
         parse(this.unzipDir, lineProcessor, delete);
     }
 
-    public <T> void parse(String dir, LineProcessor<T> lineProcessor, boolean delete) throws Exception{
+    public <T> void parse(String dir, LineProcessor<T> lineProcessor, boolean delete) throws Exception {
         File[] files = new File(dir).listFiles();
         assert files != null;
         for (File file : files) {
@@ -126,7 +126,7 @@ public class SteerableParserIntegrator {
             if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
                 IFileProcessor fileProcessor = new ParserLoggerProxy(logMapper, this.fileType, name, FileProcessor.getInstance()).getTarget();
                 fileProcessor.process(file, lineProcessor, 0, null);
-//                config.updateOrder(fileType, order);
+                //config.updateOrder(fileType, order);
                 if (delete) {
                     file.delete();
                 }
@@ -134,7 +134,6 @@ public class SteerableParserIntegrator {
         }
     }
     //-----------------------------------group 1 end--------------------------------
-
 
 
     public void unrarNoFile(ReaderHandler handler) throws Exception {
@@ -181,7 +180,7 @@ public class SteerableParserIntegrator {
     }
 
     //本地测试
-    public <T> void parseNoLog(String dir, LineProcessor<T> lineProcessor) throws Exception{
+    public <T> void parseNoLog(String dir, LineProcessor<T> lineProcessor) throws Exception {
         File[] files = new File(dir).listFiles();
         assert files != null;
         for (File file : files) {
@@ -205,9 +204,9 @@ public class SteerableParserIntegrator {
         return valid;
     }
 
-    private void checkDir(String path){
+    private void checkDir(String path) {
         File file = new File(path);
-        if(!file.exists() || !file.isDirectory()){
+        if (!file.exists() || !file.isDirectory()) {
             file.mkdir();
         }
     }
@@ -221,6 +220,12 @@ public class SteerableParserIntegrator {
 
         private Map<String, FieldSpecification> specifications;
 
+//        private List<Map<String, FieldSpecification>> batchPool;
+
+//        private int batchSize;
+//
+//        private int offset = 1;
+
         public Insert() {
             this.tableName = config.queryTableName(fileType, fileType);
             this.specifications = config.loadTableStruct(fileType);
@@ -231,13 +236,57 @@ public class SteerableParserIntegrator {
             this.specifications = config.loadTableStruct(contextName);
         }
 
-        public ReuseList<Map<String, FieldSpecification>> getBatchInsert() {
+//        public ReuseList<Map<String, FieldSpecification>> getBatchInsert() {
+//            return getBatchInsert(500);
+//        }
+//
+//        public ReuseList<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {
+//            return config.createReuseList(tableName, batchSize);
+//        }
+
+        public BatchPool<Map<String, FieldSpecification>> getBatchInsert() {
             return getBatchInsert(500);
         }
 
-        public ReuseList<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {
-            return config.createReuseList(tableName, batchSize);
+        public BatchPool<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {
+            return config.createBatchPool(tableName, batchSize);
         }
+
+//        public void batchPool(Map<String, FieldSpecification> map) {
+//            batchPool = new LinkedList<>();
+//            for (int i = 0; i < batchSize; i++) {
+//                Map<String, FieldSpecification> clone = clone(map);
+//                batchPool.add(clone);
+//            }
+//        }
+//
+//        private <T> T clone(T obj) {
+//            T cloneObj = null;
+//            try {
+//                // 写入字节流
+//                ByteArrayOutputStream out = new ByteArrayOutputStream();
+//                ObjectOutputStream obs = new ObjectOutputStream(out);
+//                obs.writeObject(obj);
+//                obs.close();
+//
+//                // 分配内存，写入原始对象，生成新对象
+//                ByteArrayInputStream ios = new ByteArrayInputStream(out.toByteArray());
+//                ObjectInputStream ois = new ObjectInputStream(ios);
+//                // 返回生成的新对象
+//                cloneObj = (T) ois.readObject();
+//                ois.close();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return cloneObj;
+//        }
+//
+//        public Map<String, FieldSpecification> getBatchRow() {
+//            int circle = offset % batchSize;
+//            Map<String, FieldSpecification> row = batchPool.get(circle);
+//            offset = circle + 1;
+//            return row;
+//        }
 
         public void insertOne(Map<String, FieldSpecification> fieldSpecifications) throws DataAccessException {
             String sql = config.insertSqlGenerator(tableName, fieldSpecifications);

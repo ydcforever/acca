@@ -1,6 +1,7 @@
 package com.btw.parser.util;
 
 import com.btw.parser.mapper.ParserLogMapper;
+import com.fate.file.parse.batch.BatchPool;
 import com.fate.file.parse.processor.LineProcessor;
 import com.fate.file.parse.steerable.FieldSpecification;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,24 +17,50 @@ public final class AccaUtils {
     public static void parser(String ftype, String ctxName, JdbcTemplate jdbcTemplate, ParserLogMapper parserlogMapper) throws Exception {
         final SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, ftype).logMapper(parserlogMapper);
         if(integrator.isValid()) {
-            integrator.download();
-            integrator.unrarFile(false);
+//            integrator.download();
+//            integrator.unrarFile(false);
             final SteerableParserIntegrator.Insert config = integrator.new Insert(ctxName);
             Map<String, FieldSpecification> map = config.getFieldSpecification();
             map.put("SOURCE_NAME", new FieldSpecification().define("SOURCE_NAME"));
+//            ReuseList<Map<String, FieldSpecification>> reuseList = config.getBatchInsert(500);
+//            config.batchPool(map);
+            BatchPool<Map<String , FieldSpecification>> pool = config.getBatchInsert();
+            pool.init(map);
             LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
                 @Override
                 public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
-                    if(lineNo == 1) {
-                        map.get("SOURCE_NAME").setVal(fileName);
-                    }
-                    splitBySpacer(line, map);
-                    config.insertOne(map);
+                    Map<String, FieldSpecification> row = pool.getBatchRow();
+                    row.get("SOURCE_NAME").setVal(fileName);
+                    splitBySpacer(line, row);
+                    pool.tryBatch();
                 }
             };
-            integrator.parse(lineProcessor, true);
+            integrator.parse(lineProcessor, false);
+            pool.restBatch();
         }
     }
+
+//    public static void parser(String ftype, String ctxName, JdbcTemplate jdbcTemplate, ParserLogMapper parserlogMapper) throws Exception {
+//        final SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, ftype).logMapper(parserlogMapper);
+//        if(integrator.isValid()) {
+//            integrator.download();
+//            integrator.unrarFile(false);
+//            final SteerableParserIntegrator.Insert config = integrator.new Insert(ctxName);
+//            Map<String, FieldSpecification> map = config.getFieldSpecification();
+//            map.put("SOURCE_NAME", new FieldSpecification().define("SOURCE_NAME"));
+//            LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
+//                @Override
+//                public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
+//                    if(lineNo == 1) {
+//                        map.get("SOURCE_NAME").setVal(fileName);
+//                    }
+//                    splitBySpacer(line, map);
+//                    config.insertOne(map);
+//                }
+//            };
+//            integrator.parse(lineProcessor, true);
+//        }
+//    }
 
     public static void splitBySpacer(String line, Map<String, FieldSpecification> specifications) {
         String[] fields = line.split("\",\"");

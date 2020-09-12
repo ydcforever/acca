@@ -4,10 +4,8 @@ import com.btw.parser.mapper.ParserLogMapper;
 import com.fate.decompress.NoFileReaderHandler;
 import com.fate.decompress.ReaderHandler;
 import com.fate.decompress.UnrarFile;
-import com.fate.file.parse.batch.ReuseList;
 import com.fate.file.parse.processor.FileProcessor;
 import com.fate.file.parse.processor.LineProcessor;
-import com.fate.file.parse.steerable.FieldSpecification;
 import com.fate.log.ParserLogger;
 import com.github.junrar.Junrar;
 import org.junit.Test;
@@ -18,7 +16,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
-import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
@@ -86,7 +83,7 @@ public class SteerableParserIntegratorTest {
     public void testParser() throws Exception {
         SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, "M_IP_SAL");
         final SteerableParserIntegrator.Insert config = integrator.new Insert("ACCA_SAL");
-        final ReuseList<Map<String, FieldSpecification>> reuseList = config.getBatchInsert();
+//        final ReuseList<Map<String, FieldSpecification>> reuseList = config.getBatchInsert();
         LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
             @Override
             public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
@@ -95,14 +92,14 @@ public class SteerableParserIntegratorTest {
             }
         };
         FileProcessor.getInstance().process("C:\\Users\\T440\\Desktop\\beans\\unzip\\M_IP_SAL_201907_20190811.csv", lineProcessor);
-        reuseList.restInsert();
+//        reuseList.restInsert();
     }
 
     @Test
     public void testParseNoLog() throws Exception {
         SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, "M_DP_SAL");
         final SteerableParserIntegrator.Insert config = integrator.new Insert("ACCA_SAL");
-        final ReuseList<Map<String, FieldSpecification>> reuseList = config.getBatchInsert();
+//        final ReuseList<Map<String, FieldSpecification>> reuseList = config.getBatchInsert();
         LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
             @Override
             public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
@@ -111,6 +108,6 @@ public class SteerableParserIntegratorTest {
             }
         };
         integrator.parseNoLog("C:\\Users\\T440\\Desktop\\beans\\unzip", lineProcessor);
-        reuseList.restInsert();
+//        reuseList.restInsert();
     }
 }
