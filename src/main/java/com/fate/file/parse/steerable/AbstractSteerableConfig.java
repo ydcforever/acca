@@ -39,21 +39,7 @@ public abstract class AbstractSteerableConfig {
         return new BatchPool<>(tableName, insertDB, batchSize);
     }
 
-
-    public String batchInsertGenerator(String tableName, List<Map<String, FieldSpecification>> rows) {
-        StringBuilder insert = new StringBuilder("INSERT ALL");
-        for(Map<String, FieldSpecification> row : rows) {
-            insert.append(insertOneGenerator(tableName, row));
-        }
-        insert.append("SELECT 1 FROM DUAL");
-        return insert.toString();
-    }
-
     public String insertSqlGenerator(String tableName, Map<String, FieldSpecification> row) {
-        return "INSERT" + insertOneGenerator(tableName, row);
-    }
-
-    private String insertOneGenerator(String tableName, Map<String, FieldSpecification> row) {
         StringBuilder colBuilder = new StringBuilder();
         StringBuilder valBuilder = new StringBuilder();
         int i = 0;
@@ -72,8 +58,46 @@ public abstract class AbstractSteerableConfig {
                 i++;
             }
         }
-        return " INTO " + tableName + " (" + colBuilder.toString() + ")" +
+        return "INSERT INTO " + tableName + " (" + colBuilder.toString() + ")" +
                 " VALUES (" + valBuilder.toString() + ") ";
+    }
+
+    public String batchInsertGenerator(String tableName, List<Map<String, FieldSpecification>> rows) {
+        StringBuilder builder = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
+        Collection<FieldSpecification> collection = rows.get(0).values();
+        int i = 0;
+        StringBuilder colBuilder = new StringBuilder();
+        for(FieldSpecification field : collection) {
+            if (i > 0) {
+                colBuilder.append(",");
+            }
+            colBuilder.append(field.getCol());
+            i++;
+        }
+        builder.append(colBuilder).append(") ");
+        int j = 0;
+        for(Map<String, FieldSpecification> row : rows) {
+            if(j > 0) {
+                builder.append(" UNION ALL ");
+            }
+            builder.append(selectDual(row));
+            j++;
+        }
+        return builder.toString();
+    }
+
+    private StringBuilder selectDual(Map<String, FieldSpecification> row){
+        StringBuilder valBuilder = new StringBuilder("SELECT ");
+        Collection<FieldSpecification> collection = row.values();
+        int i= 0;
+        for(FieldSpecification field : collection) {
+            if (i > 0) {
+                valBuilder.append(",");
+            }
+            valBuilder.append(valGenerator(field));
+            i++;
+        }
+        return valBuilder.append(" FROM DUAL ");
     }
 
     public String updateSqlGenerator(String tableName, Map<String, FieldSpecification> row) {

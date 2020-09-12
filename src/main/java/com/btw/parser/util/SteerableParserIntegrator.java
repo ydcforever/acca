@@ -220,12 +220,6 @@ public class SteerableParserIntegrator {
 
         private Map<String, FieldSpecification> specifications;
 
-//        private List<Map<String, FieldSpecification>> batchPool;
-
-//        private int batchSize;
-//
-//        private int offset = 1;
-
         public Insert() {
             this.tableName = config.queryTableName(fileType, fileType);
             this.specifications = config.loadTableStruct(fileType);
@@ -236,57 +230,13 @@ public class SteerableParserIntegrator {
             this.specifications = config.loadTableStruct(contextName);
         }
 
-//        public ReuseList<Map<String, FieldSpecification>> getBatchInsert() {
-//            return getBatchInsert(500);
-//        }
-//
-//        public ReuseList<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {
-//            return config.createReuseList(tableName, batchSize);
-//        }
-
         public BatchPool<Map<String, FieldSpecification>> getBatchInsert() {
-            return getBatchInsert(500);
+            return getBatchInsert(1000);
         }
 
         public BatchPool<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {
             return config.createBatchPool(tableName, batchSize);
         }
-
-//        public void batchPool(Map<String, FieldSpecification> map) {
-//            batchPool = new LinkedList<>();
-//            for (int i = 0; i < batchSize; i++) {
-//                Map<String, FieldSpecification> clone = clone(map);
-//                batchPool.add(clone);
-//            }
-//        }
-//
-//        private <T> T clone(T obj) {
-//            T cloneObj = null;
-//            try {
-//                // 写入字节流
-//                ByteArrayOutputStream out = new ByteArrayOutputStream();
-//                ObjectOutputStream obs = new ObjectOutputStream(out);
-//                obs.writeObject(obj);
-//                obs.close();
-//
-//                // 分配内存，写入原始对象，生成新对象
-//                ByteArrayInputStream ios = new ByteArrayInputStream(out.toByteArray());
-//                ObjectInputStream ois = new ObjectInputStream(ios);
-//                // 返回生成的新对象
-//                cloneObj = (T) ois.readObject();
-//                ois.close();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            return cloneObj;
-//        }
-//
-//        public Map<String, FieldSpecification> getBatchRow() {
-//            int circle = offset % batchSize;
-//            Map<String, FieldSpecification> row = batchPool.get(circle);
-//            offset = circle + 1;
-//            return row;
-//        }
 
         public void insertOne(Map<String, FieldSpecification> fieldSpecifications) throws DataAccessException {
             String sql = config.insertSqlGenerator(tableName, fieldSpecifications);

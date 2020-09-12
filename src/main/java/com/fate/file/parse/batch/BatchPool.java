@@ -64,8 +64,6 @@ public final class BatchPool<T> {
         }
     }
 
-
-
     public void restBatch() throws Exception{
         if (offset < batchSize) {
             LOG.info("Begin to insert " + tableName + " rest record :" + offset);
