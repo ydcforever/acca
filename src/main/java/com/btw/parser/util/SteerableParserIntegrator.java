@@ -231,7 +231,7 @@ public class SteerableParserIntegrator {
         }
 
         public BatchPool<Map<String, FieldSpecification>> getBatchInsert() {
-            return getBatchInsert(1000);
+            return getBatchInsert(500);
         }
 
         public BatchPool<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {

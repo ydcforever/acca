@@ -1,5 +1,6 @@
 package com.fate.file.parse;
 
+import com.fate.file.parse.batch.BatchInsertDB;
 import com.fate.file.parse.batch.BatchPool;
 import com.fate.file.parse.steerable.AbstractSteerableConfig;
 import com.fate.file.parse.steerable.FieldSpecification;
@@ -9,6 +10,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,8 +33,9 @@ public final class DBSteerableConfig extends AbstractSteerableConfig {
             "where t.file_type = ? and t.begin_flag < ?";
 
     private JdbcTemplate jdbcTemplate;
+
     public DBSteerableConfig(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate  = jdbcTemplate;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -73,6 +76,13 @@ public final class DBSteerableConfig extends AbstractSteerableConfig {
     }
 
     public BatchPool<Map<String, FieldSpecification>> createBatchPool(String tableName, int batchSize) {
-        return createBatchPool(jdbcTemplate, tableName, batchSize);
+        BatchInsertDB<Map<String, FieldSpecification>> insertDB = new BatchInsertDB<Map<String, FieldSpecification>>() {
+            @Override
+            public void doWith(String tableName, List<Map<String, FieldSpecification>> list) throws Exception {
+                String sql = batchInsertGenerator(tableName, list);
+                jdbcTemplate.update(sql);
+            }
+        };
+        return new BatchPool<>(tableName, insertDB, batchSize);
     }
 }

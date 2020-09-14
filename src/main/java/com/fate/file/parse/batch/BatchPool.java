@@ -45,7 +45,7 @@ public final class BatchPool<T> {
         return this;
     }
 
-    public T getBatchRow() throws Exception{
+    public T getBatchRow() {
         int circle = offset % batchSize;
         T t = pool.get(circle);
         offset = circle + 1;
@@ -54,26 +54,13 @@ public final class BatchPool<T> {
 
     public void tryBatch() throws Exception{
         if(offset == batchSize) {
-            LOG.info("[{}] meet the batch size and begin to Insert.", tableName);
-            boolean success = insertDB.doWith(tableName, pool);
-            if (success) {
-                LOG.info("[{}] complete batch insert.");
-            } else {
-                throw new Exception("Error---------" + tableName + " BatchInsert Failure!");
-            }
+            insertDB.doWith(tableName, pool);
         }
     }
 
     public void restBatch() throws Exception{
         if (offset < batchSize) {
-            LOG.info("Begin to insert " + tableName + " rest record :" + offset);
-            boolean success = insertDB.doWith(tableName, pool.subList(0, offset));
-            if (success) {
-                LOG.info("Complete insert [{}] rest record." , tableName);
-            } else {
-                LOG.error("Rest record of [{}] insert failure!", tableName);
-                throw new Exception("Error---------" + tableName + " restInsert Failure!");
-            }
+            insertDB.doWith(tableName, pool.subList(0, offset));
         }
     }
 

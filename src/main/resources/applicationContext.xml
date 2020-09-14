@@ -26,6 +26,7 @@
 
     <bean id="manager" class="com.fate.schedule.SteerableScheduleManager">
         <constructor-arg name="poolSize" value="35" />
+        <constructor-arg name="autoOpen" value="true"/>
     </bean>
     <!-- implementor提供者
     A：直接给定服务器提供者类名

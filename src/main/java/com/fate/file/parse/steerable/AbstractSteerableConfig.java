@@ -1,10 +1,5 @@
 package com.fate.file.parse.steerable;
 
-import com.fate.file.parse.batch.BatchInsertDB;
-import com.fate.file.parse.batch.BatchPool;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -21,23 +16,6 @@ public abstract class AbstractSteerableConfig {
     public abstract void updateOrder(String fileType, String order);
 
     public abstract  Map<String, FieldSpecification> loadTableStruct(String contextName);
-
-    public BatchPool<Map<String, FieldSpecification>> createBatchPool(final JdbcTemplate jdbcTemplate, String tableName, int batchSize) {
-        BatchInsertDB<Map<String, FieldSpecification>> insertDB = new BatchInsertDB<Map<String, FieldSpecification>>() {
-            @Override
-            public boolean doWith(String tableName, List<Map<String, FieldSpecification>> list) {
-                try {
-                    String sql = batchInsertGenerator(tableName, list);
-                    jdbcTemplate.update(sql);
-                    return true;
-                } catch (DataAccessException ignored) {
-
-                }
-                return false;
-            }
-        };
-        return new BatchPool<>(tableName, insertDB, batchSize);
-    }
 
     public String insertSqlGenerator(String tableName, Map<String, FieldSpecification> row) {
         StringBuilder colBuilder = new StringBuilder();

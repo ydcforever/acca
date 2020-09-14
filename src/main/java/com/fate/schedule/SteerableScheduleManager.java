@@ -28,6 +28,8 @@ public class SteerableScheduleManager implements BeanPostProcessor, Ordered, Dis
 
     private ThreadPoolTaskScheduler taskScheduler;
 
+    private boolean autoOpen = false;
+
     private final Map<String, CronTask> tasks = new HashMap<>();
 
     private final Map<String, ScheduledFuture<?>> futures = new LinkedHashMap<>();
@@ -35,6 +37,16 @@ public class SteerableScheduleManager implements BeanPostProcessor, Ordered, Dis
     private static Objenesis objenesis = new ObjenesisStd(true);
 
     public SteerableScheduleManager(Integer poolSize) {
+        createTaskScheduler(poolSize);
+        this.autoOpen = false;
+    }
+
+    public SteerableScheduleManager(Integer poolSize, boolean autoOpen) {
+        createTaskScheduler(poolSize);
+        this.autoOpen = autoOpen;
+    }
+
+    private void createTaskScheduler(Integer poolSize){
         taskScheduler = new ThreadPoolTaskScheduler();
         taskScheduler.setPoolSize(poolSize);
         taskScheduler.initialize();
@@ -163,7 +175,7 @@ public class SteerableScheduleManager implements BeanPostProcessor, Ordered, Dis
             @Override
             public void inspect(Method method, SteerableSchedule steerableSchedule) {
                 Runnable runnable = new ScheduledMethodRunnable(bean, method);
-                addTask(steerableSchedule.id(), runnable, steerableSchedule.cron(), true);
+                addTask(steerableSchedule.id(), runnable, steerableSchedule.cron(), autoOpen);
             }
         });
         return bean;

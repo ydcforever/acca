@@ -14,15 +14,24 @@ import java.util.Map;
  */
 public final class AccaUtils {
 
+    /**
+     * 批量插入
+     * @param ftype
+     * @param ctxName
+     * @param jdbcTemplate
+     * @param parserlogMapper
+     * @throws Exception
+     */
     public static void parser(String ftype, String ctxName, JdbcTemplate jdbcTemplate, ParserLogMapper parserlogMapper) throws Exception {
         final SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, ftype).logMapper(parserlogMapper);
         if(integrator.isValid()) {
-//            integrator.download();
-//            integrator.unrarFile(false);
+            integrator.download();
+            //不支持rar5
+            integrator.unrarFile(false);
             final SteerableParserIntegrator.Insert config = integrator.new Insert(ctxName);
             Map<String, FieldSpecification> map = config.getFieldSpecification();
             map.put("SOURCE_NAME", new FieldSpecification().define("SOURCE_NAME"));
-            BatchPool<Map<String , FieldSpecification>> pool = config.getBatchInsert(1000);
+            BatchPool<Map<String , FieldSpecification>> pool = config.getBatchInsert();
             pool.init(map);
             LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
                 @Override
@@ -38,6 +47,14 @@ public final class AccaUtils {
         }
     }
 
+    /**
+     * 单行插入
+     * @param ftype
+     * @param ctxName
+     * @param jdbcTemplate
+     * @param parserlogMapper
+     * @throws Exception
+     */
     public static void parser1(String ftype, String ctxName, JdbcTemplate jdbcTemplate, ParserLogMapper parserlogMapper) throws Exception {
         final SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, ftype).logMapper(parserlogMapper);
         if(integrator.isValid()) {

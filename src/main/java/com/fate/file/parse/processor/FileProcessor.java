@@ -68,7 +68,7 @@ public final class FileProcessor implements IFileProcessor {
                         lineNo++;
                     } catch (Exception e) {
                         LOG.error("the [{}] at {} line parse failure!", fileName, lineNo);
-                        throw new Exception(fileName + "->" + lineNo + ":" + line + " parse failure!");
+                        throw new Exception(fileName + "->" + lineNo + ":" + line + " parse failure! " + e.getMessage());
                     }
                 }
                 LOG.info("------------------Complete process file [{}]", fileName);
