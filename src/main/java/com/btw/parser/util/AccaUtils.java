@@ -42,7 +42,7 @@ public final class AccaUtils {
                     pool.tryBatch();
                 }
             };
-            integrator.parse(lineProcessor, false);
+            integrator.parse(lineProcessor, true);
             pool.restBatch();
         }
     }
