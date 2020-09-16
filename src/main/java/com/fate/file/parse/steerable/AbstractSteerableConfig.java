@@ -1,5 +1,7 @@
 package com.fate.file.parse.steerable;
 
+import org.springframework.util.StringUtils;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +121,8 @@ public abstract class AbstractSteerableConfig {
         if (FieldType.D.compareTo(type)) {
             sb.append("to_date('").append(val).append("', '").append(df).append("')");
         } else if (FieldType.N.compareTo(type)) {
-            sb.append(val);
+            String num = StringUtils.isEmpty(val.trim()) ? "0" : val;
+            sb.append(num);
         } else {
             sb.append("'").append(val.replace("'","''")).append("'");
         }

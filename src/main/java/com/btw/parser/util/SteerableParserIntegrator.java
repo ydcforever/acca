@@ -104,6 +104,7 @@ public class SteerableParserIntegrator {
                     String order = fileSelector.getOrder(name);
                     if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
                         Junrar.extract(file.getPath(), this.unzipDir);
+//                        Unrar5.window(file.getPath(), this.unzipDir, "");
                         if (delete) {
                             file.delete();
                         }
@@ -126,7 +127,7 @@ public class SteerableParserIntegrator {
             if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
                 IFileProcessor fileProcessor = new ParserLoggerProxy(logMapper, this.fileType, name, FileProcessor.getInstance()).getTarget();
                 fileProcessor.process(file, lineProcessor, 0, null);
-                //config.updateOrder(fileType, order);
+                config.updateOrder(fileType, order);
                 if (delete) {
                     file.delete();
                 }
@@ -231,7 +232,7 @@ public class SteerableParserIntegrator {
         }
 
         public BatchPool<Map<String, FieldSpecification>> getBatchInsert() {
-            return getBatchInsert(500);
+            return getBatchInsert(2);
         }
 
         public BatchPool<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {

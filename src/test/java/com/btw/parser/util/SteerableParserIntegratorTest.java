@@ -33,7 +33,7 @@ public class SteerableParserIntegratorTest {
 //        AccaUtils.parser("D_IP_OPRA", "ACCA_OPRA_D", jdbcTemplate, parserlogMapper);
 //        AccaUtils.parser("D_IP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper);
 //        AccaUtils.parser("M_IP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper);
-          AccaUtils.parser("D_DP_UPL", "ACCA_UPL", jdbcTemplate, parserlogMapper);
+          AccaUtils.parser("D_IP_PRA", "ACCA_PRA_D", jdbcTemplate, parserlogMapper);
     }
 
     @Test

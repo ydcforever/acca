@@ -6,21 +6,22 @@ import java.io.InputStreamReader;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-public class UnrarDemo {
+/**
+ * Created by ydc on 2020/9/15.
+ */
+public final class Unrar5 {
 
-    public static void main(String[] args) {
-        String filepath = "itaxCoupon_Refund20200817.rar";
-        int exitCode = doUnRar(filepath);
-        if (exitCode !=0 ){
-            System.out.println("Error");
-        } else {
-            System.out.println("Success");
-        }
-        System.exit(0);
+    public static int linux(String rarFile, String unrarDir) {
+        String cmd = "unrar x " + rarFile + " " + unrarDir;
+        return doUnRar(cmd);
     }
 
-    private static int doUnRar(String filepath) {
-        String cmd = String.format("unrar e -y %s", filepath);
+    public static int window(String rarFile, String unrarDir, String exePath){
+        String cmd = exePath + " x " + rarFile + " " + unrarDir;
+        return doUnRar(cmd);
+    }
+
+    private static int doUnRar(String cmd) {
         try {
             Process process = Runtime.getRuntime().exec(cmd);
             StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
@@ -47,5 +48,4 @@ public class UnrarDemo {
                     .lines().forEach(consumer);
         }
     }
-
 }
