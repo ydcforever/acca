@@ -20,14 +20,18 @@ public final class AccaUtils {
      * @param ctxName
      * @param jdbcTemplate
      * @param parserlogMapper
+     * @param rar5
      * @throws Exception
      */
-    public static void parser(String ftype, String ctxName, JdbcTemplate jdbcTemplate, ParserLogMapper parserlogMapper) throws Exception {
+    public static void parser(String ftype, String ctxName, JdbcTemplate jdbcTemplate, ParserLogMapper parserlogMapper, boolean rar5) throws Exception {
         final SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, ftype).logMapper(parserlogMapper);
         if(integrator.isValid()) {
-            integrator.download();
-            //不支持rar5
-            integrator.unrarFile(false);
+            //增加rar5区分
+            if(!rar5){
+                integrator.download();
+                //不支持rar5
+                integrator.unrarFile(false);
+            }
             final SteerableParserIntegrator.Insert config = integrator.new Insert(ctxName);
             Map<String, FieldSpecification> map = config.getFieldSpecification();
             map.put("SOURCE_NAME", new FieldSpecification().define("SOURCE_NAME"));

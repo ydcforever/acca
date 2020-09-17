@@ -71,7 +71,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_DP_UPL", cron = "0 30 14 ? * *")
     public void parseMDpUpl() throws Exception {
-        parser("M_DP_UPL", "ACCA_UPL");
+        parser("M_DP_UPL", "ACCA_UPL", true);
     }
 
     @ApiOperation(value = "D_IP_UPL")
@@ -87,7 +87,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_IP_UPL", cron = "0 30 14 ? * *")
     public void parseMIpUpl() throws Exception {
-        parser("M_IP_UPL", "ACCA_UPL");
+        parser("M_IP_UPL", "ACCA_UPL", true);
     }
 
     @ApiOperation(value = "D_DP_SAL")
@@ -105,7 +105,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_DP_SAL", cron = "0 30 14 ? * *")
     public void parseMDpSal() throws Exception {
-        parser("M_DP_SAL", "ACCA_SAL");
+        parser("M_DP_SAL", "ACCA_SAL", true);
     }
 
     @ApiOperation(value = "D_IP_SAL")
@@ -121,7 +121,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_IP_SAL", cron = "0 30 14 ? * *")
     public void parseMIpSal() throws Exception {
-        parser("M_IP_SAL", "ACCA_SAL");
+        parser("M_IP_SAL", "ACCA_SAL", true);
     }
 
     @ApiOperation(value = "D_DP_TAX")
@@ -137,7 +137,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_DP_TAX", cron = "0 30 14 ? * *")
     public void parseMDpTax() throws Exception {
-        parser("M_DP_TAX", "ACCA_TAX_DP");
+        parser("M_DP_TAX", "ACCA_TAX_DP", true);
     }
 
     @ApiOperation(value = "D_IP_TAX")
@@ -153,7 +153,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_IP_TAX", cron = "0 30 14 ? * *")
     public void parseMIpTax() throws Exception {
-        parser("M_IP_TAX", "ACCA_TAX_IP");
+        parser("M_IP_TAX", "ACCA_TAX_IP", true);
     }
 
     @ApiOperation(value = "M_DP_ADM")
@@ -161,7 +161,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_DP_ADM", cron = "0 30 14 ? * *")
     public void parseMDpADM() throws Exception {
-        parser("M_DP_ADM", "ACCA_ADM_M");
+        parser("M_DP_ADM", "ACCA_ADM_M", true);
     }
 
     @ApiOperation(value = "M_IP_ADM")
@@ -169,7 +169,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_IP_ADM", cron = "0 30 14 ? * *")
     public void parseMIpADM() throws Exception {
-        parser("M_IP_ADM", "ACCA_ADM_M");
+        parser("M_IP_ADM", "ACCA_ADM_M", true);
     }
 
     @ApiOperation(value = "M_DP_IWB")
@@ -177,7 +177,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_DP_IWB", cron = "0 30 14 ? * *")
     public void parseMDpIwb() throws Exception {
-        parser("M_DP_IWB", "ACCA_IWB_M");
+        parser("M_DP_IWB", "ACCA_IWB_M", true);
     }
 
     @ApiOperation(value = "M_IP_IWB")
@@ -185,7 +185,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_IP_IWB", cron = "0 30 14 ? * *")
     public void parseMIpIwb() throws Exception {
-        parser("M_IP_IWB", "ACCA_IWB_M");
+        parser("M_IP_IWB", "ACCA_IWB_M", true);
     }
 
     @ApiOperation(value = "M_IP_MCO")
@@ -193,7 +193,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_IP_MCO", cron = "0 30 14 ? * *")
     public void parseMIpMCO() throws Exception {
-        parser("M_IP_MCO", "ACCA_MCO_IP");
+        parser("M_IP_MCO", "ACCA_MCO_IP", true);
     }
 
     @ApiOperation(value = "M_DP_REF")
@@ -201,7 +201,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_DP_REF", cron = "0 30 14 ? * *")
     public void parseMDpRef() throws Exception {
-        parser("M_DP_REF", "ACCA_REF_DP_M");
+        parser("M_DP_REF", "ACCA_REF_DP_M", true);
     }
 
     @ApiOperation(value = "M_IP_REF")
@@ -209,7 +209,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_IP_REF", cron = "0 30 14 ? * *")
     public void parseMIpRef() throws Exception {
-        parser("M_IP_REF", "ACCA_REF_IP_M");
+        parser("M_IP_REF", "ACCA_REF_IP_M", true);
     }
 
     @ApiOperation(value = "M_DP_RFD")
@@ -217,7 +217,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_DP_RFD", cron = "0 30 14 ? * *")
     public void parseMDpRfd() throws Exception {
-        parser("M_DP_RFD", "ACCA_RFD_DP_M");
+        parser("M_DP_RFD", "ACCA_RFD_DP_M", true);
     }
 
     @ApiOperation(value = "M_IP_RFD")
@@ -225,7 +225,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_IP_RFD", cron = "0 30 14 ? * *")
     public void parseMIpRfd() throws Exception {
-        parser("M_IP_RFD", "ACCA_RFD_IP_M");
+        parser("M_IP_RFD", "ACCA_RFD_IP_M", true);
     }
 
     @ApiOperation(value = "M_DP_XBG")
@@ -233,7 +233,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_DP_XBG", cron = "0 30 14 ? * *")
     public void parseMDpXbg() throws Exception {
-        parser("M_DP_XBG", "ACCA_XBG_DP_M");
+        parser("M_DP_XBG", "ACCA_XBG_DP_M", true);
     }
 
     @ApiOperation(value = "M_IP_XBG")
@@ -241,7 +241,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_IP_XBG", cron = "0 30 14 ? * *")
     public void parseMIpXbg() throws Exception {
-        parser("M_IP_XBG", "ACCA_XBG_IP_M");
+        parser("M_IP_XBG", "ACCA_XBG_IP_M", true);
     }
 
     @ApiOperation(value = "M_MM_AGT")
@@ -249,7 +249,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_MM_AGT", cron = "0 30 14 ? * *")
     public void parseMMmAgt() throws Exception {
-        parser("M_MM_AGT", "ACCA_AGT");
+        parser("M_MM_AGT", "ACCA_AGT", true);
     }
 
     @ApiOperation(value = "M_MM_CDS")
@@ -257,7 +257,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_MM_CDS", cron = "0 30 14 ? * *")
     public void parseMMmCDS() throws Exception {
-        parser("M_MM_CDS", "ACCA_CDS");
+        parser("M_MM_CDS", "ACCA_CDS", true);
     }
 
     @ApiOperation(value = "M_MM_CHI")
@@ -265,7 +265,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_MM_CHI", cron = "0 30 14 ? * *")
     public void parseMMmChi() throws Exception {
-        parser("M_MM_CHI", "ACCA_CHI");
+        parser("M_MM_CHI", "ACCA_CHI", true);
     }
 
     @ApiOperation(value = "M_MM_FAB")
@@ -273,7 +273,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_MM_FAB", cron = "0 30 14 ? * *")
     public void parseMMmFab() throws Exception {
-        parser("M_MM_FAB", "ACCA_FAB");
+        parser("M_MM_FAB", "ACCA_FAB", true);
     }
 
     @ApiOperation(value = "M_MM_FLI")
@@ -281,7 +281,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_MM_FLI", cron = "0 30 14 ? * *")
     public void parseMMmFli() throws Exception {
-        parser("M_MM_FLI", "ACCA_FLI");
+        parser("M_MM_FLI", "ACCA_FLI", true);
     }
 
     @ApiOperation(value = "M_MM_PAH")
@@ -289,7 +289,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_MM_PAH", cron = "0 30 14 ? * *")
     public void parseMMmPah() throws Exception {
-        parser("M_MM_PAH", "ACCA_PAH");
+        parser("M_MM_PAH", "ACCA_PAH", true);
     }
 
     @ApiOperation(value = "M_MM_PFA")
@@ -297,7 +297,7 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_MM_PFA", cron = "0 30 14 ? * *")
     public void parseMMmPfa() throws Exception {
-        parser("M_MM_PFA", "ACCA_PFA");
+        parser("M_MM_PFA", "ACCA_PFA", true);
     }
 
     @ApiOperation(value = "M_MM_VCN")
@@ -305,10 +305,14 @@ public class ACCAController {
     @ResponseBody
     @SteerableSchedule(id = "M_MM_VCN", cron = "0 30 14 ? * *")
     public void parseMMmVcn() throws Exception {
-        parser("M_MM_VCN", "ACCA_VCN");
+        parser("M_MM_VCN", "ACCA_VCN", true);
     }
 
     private void parser(String ftype, String ctxName) throws Exception{
-        AccaUtils.parser(ftype, ctxName,jdbcTemplate, parserlogMapper);
+        AccaUtils.parser(ftype, ctxName,jdbcTemplate, parserlogMapper, false);
+    }
+
+    private void parser(String ftype, String ctxName, boolean rar5) throws Exception{
+        AccaUtils.parser(ftype, ctxName,jdbcTemplate, parserlogMapper, rar5);
     }
 }

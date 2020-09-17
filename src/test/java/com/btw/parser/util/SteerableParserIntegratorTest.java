@@ -27,13 +27,14 @@ public class SteerableParserIntegratorTest {
     @Autowired
     private ParserLogMapper parserlogMapper;
 
+    //完整测试
     @Test
     public void testUnrarNoFile() throws Exception {
 
 //        AccaUtils.parser("D_IP_OPRA", "ACCA_OPRA_D", jdbcTemplate, parserlogMapper);
 //        AccaUtils.parser("D_IP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper);
 //        AccaUtils.parser("M_IP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper);
-          AccaUtils.parser("D_IP_PRA", "ACCA_PRA_D", jdbcTemplate, parserlogMapper);
+          AccaUtils.parser("D_IP_PRA", "ACCA_PRA_D", jdbcTemplate, parserlogMapper, false);
     }
 
     @Test
@@ -43,7 +44,7 @@ public class SteerableParserIntegratorTest {
     }
 
     @Test
-    public void testPa() throws Exception {
+    public void testCsvParser() throws Exception {
         String filePath = "C:\\Users\\T440\\Desktop\\beans\\unzip\\D_DP_UPL_20190401.csv";
         FileProcessor.getInstance().process(new File(filePath), new LineProcessor() {
             @Override
@@ -54,6 +55,7 @@ public class SteerableParserIntegratorTest {
     }
 
     @Test
+    @Deprecated
     public void testLog() throws Exception{
         SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, "M_DP_TAX").logMapper(parserlogMapper);
         final SteerableParserIntegrator.Insert config = integrator.new Insert("ACCA_TAX_DP");
@@ -116,5 +118,34 @@ public class SteerableParserIntegratorTest {
         };
         integrator.parseNoLog("C:\\Users\\T440\\Desktop\\beans\\unzip", lineProcessor);
         pool.restBatch();
+    }
+
+
+    //月数据提前下载，量比较大，然后手动解压到unzip目录下
+    @Test
+    public void testDownloadAllMonth() throws Exception {
+        String[] keys = new String[]{
+                "M_DP_SAL","M_IP_SAL",
+                "M_DP_TAX","M_IP_TAX",
+                "M_DP_UPL", "M_IP_UPL",
+                "M_DP_ADM","M_IP_ADM",
+                "M_DP_IWB", "M_IP_IWB",
+                "M_IP_MCO",
+                "M_DP_REF", "M_IP_REF",
+                "M_DP_RFD", "M_IP_RFD",
+                "M_DP_XBG", "M_IP_XBG",
+                "M_MM_AGT",
+                "M_MM_CDS",
+                "M_MM_CHI",
+                "M_MM_FAB",
+                "M_MM_FLI",
+                "M_MM_PAH",
+                "M_MM_PFA",
+                "M_MM_VCN",
+        };
+        for(String key : keys){
+            SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, key);
+            integrator.download();
+        }
     }
 }
