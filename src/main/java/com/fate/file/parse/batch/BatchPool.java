@@ -2,21 +2,22 @@ package com.fate.file.parse.batch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by ydc on 2020/9/11.
  */
-public final class BatchPool<T> {
+public final class BatchPool<T> implements Serializable, DisposableBean {
+
     private static final Logger LOG = LoggerFactory.getLogger(BatchPool.class);
 
     private List<T> pool;
+
+    private T t;
 
     private int batchSize;
 
@@ -36,51 +37,62 @@ public final class BatchPool<T> {
         return batchSize;
     }
 
-    public BatchPool<T> init(T t){
+    public BatchPool<T> init(T t) {
         pool = new LinkedList<>();
-        for(int i=0; i < batchSize; i++) {
-            T clone = clone(t);
-            pool.add(clone);
-        }
+        this.t = t;
         return this;
     }
 
-    public T getBatchRow() {
+    public T getBatchRow() throws Exception {
+        if (pool.size() < batchSize) {
+            T clone = clone(t);
+            pool.add(clone);
+        }
         int circle = offset % batchSize;
         T t = pool.get(circle);
         offset = circle + 1;
         return t;
     }
 
-    public void tryBatch() throws Exception{
-        if(offset == batchSize) {
+    public void tryBatch() throws Exception {
+        if (offset == batchSize) {
+            LOG.info("[{}] meet the batch size and begin to insert.", tableName);
             insertDB.doWith(tableName, pool);
+            LOG.info("[{}] complete batch insert.");
         }
     }
 
-    public void restBatch() throws Exception{
-        if (offset < batchSize) {
-            insertDB.doWith(tableName, pool.subList(0, offset));
+    public void restBatch() throws Exception {
+        if (offset > 0 && offset < batchSize) {
+            LOG.info("Begin to insert " + tableName + " rest record :" + offset);
+            try {
+                insertDB.doWith(tableName, pool.subList(0, offset));
+                LOG.info("Complete insert [{}] rest record.", tableName);
+            } finally {
+                offset = 0;
+            }
         }
     }
 
     private T clone(T obj) {
         T cloneObj = null;
         try {
-            // 写入字节流
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ObjectOutputStream obs = new ObjectOutputStream(out);
             obs.writeObject(obj);
             obs.close();
-            // 分配内存，写入原始对象，生成新对象
             ByteArrayInputStream ios = new ByteArrayInputStream(out.toByteArray());
             ObjectInputStream ois = new ObjectInputStream(ios);
-            // 返回生成的新对象
             cloneObj = (T) ois.readObject();
             ois.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return cloneObj;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        pool.clear();
     }
 }

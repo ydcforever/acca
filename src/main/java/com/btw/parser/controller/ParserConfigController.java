@@ -1,6 +1,6 @@
 package com.btw.parser.controller;
 
-import com.btw.parser.util.JsonUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
@@ -31,7 +31,8 @@ public class ParserConfigController {
     public String query(@RequestParam("id")String id) throws Exception{
         try{
             Map<String, Object> map = jdbcTemplate.queryForMap(QUERY_SQL, new Object[]{id});
-            return JsonUtil.map2json(map);
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(map);
         }catch (Exception e){
         }
         return "";

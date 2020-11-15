@@ -1,25 +1,18 @@
 package com.btw.parser.util;
 
 import com.btw.parser.mapper.ParserLogMapper;
-import com.fate.decompress.DecompressFactory;
-import com.fate.decompress.DecompressFile;
-import com.fate.decompress.ReaderHandler;
-import com.fate.decompress.UnrarFile;
 import com.fate.file.parse.DBSteerableConfig;
 import com.fate.file.parse.batch.BatchPool;
-import com.fate.file.parse.processor.FileProcessor;
-import com.fate.file.parse.processor.IFileProcessor;
 import com.fate.file.parse.processor.LineProcessor;
 import com.fate.file.parse.steerable.FieldSpecification;
 import com.fate.file.transfer.FileSelector;
+import com.fate.file.utils.FileComparator;
 import com.fate.log.ParserLoggerProxy;
-import com.github.junrar.Junrar;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -93,20 +86,36 @@ public class SteerableParserIntegrator {
         ftpFactory.download(fileSelector);
     }
 
-    //------------------------------group 1 start--------------------------------
-    public void unrarFile(boolean delete) throws Exception {
-        File[] files = new File(saveDir).listFiles();
+    /**
+     * 单文件解压解析流程绑定
+     * @param lineProcessor
+     * @param delRar
+     * @param delCsv
+     * @throws Exception
+     */
+    public void unrarAndParse(BatchPool<Map<String , FieldSpecification>> pool, LineProcessor lineProcessor, boolean delRar, boolean delCsv) throws Exception{
+        File[] files = FileComparator.sort(saveDir);
+        Parser parser = new Parser();
         if (files != null) {
-            Arrays.sort(files);
             for (File file : files) {
                 if (!file.isDirectory()) {
                     String name = file.getName();
                     String order = fileSelector.getOrder(name);
                     if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
-                        Junrar.extract(file.getPath(), this.unzipDir);
-//                        Unrar5.window(file.getPath(), this.unzipDir, "G:\\WinRar\\WinRAR.exe");
-                        if (delete) {
+                        Unrar5.window(file.getPath(), this.unzipDir, "G:\\WinRar\\WinRAR.exe");
+                        File newFile = new File(this.unzipDir + File.separator + name.replace("rar", "csv"));
+                        if(logMapper == null) {
+                            parser.doWith(newFile, pool, lineProcessor);
+                        } else {
+                            IParser iParser = new ParserLoggerProxy(logMapper, this.fileType, name, parser).getTarget();
+                            iParser.doWith(newFile, pool, lineProcessor);
+                        }
+                        config.updateOrder(fileType, order);
+                        if (delRar) {
                             file.delete();
+                        }
+                        if(delCsv) {
+                            newFile.delete();
                         }
                     }
                 }
@@ -114,80 +123,27 @@ public class SteerableParserIntegrator {
         }
     }
 
-    public <T> void parse(LineProcessor<T> lineProcessor, boolean delete) throws Exception {
-        parse(this.unzipDir, lineProcessor, delete);
-    }
-
-    public <T> void parse(String dir, LineProcessor<T> lineProcessor, boolean delete) throws Exception {
-        File[] files = new File(dir).listFiles();
-        assert files != null;
-        for (File file : files) {
-            String name = file.getName();
-            String order = fileSelector.getOrder(name);
-            if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
-                IFileProcessor fileProcessor = new ParserLoggerProxy(logMapper, this.fileType, name, FileProcessor.getInstance()).getTarget();
-                fileProcessor.process(file, lineProcessor, 0, null);
-                config.updateOrder(fileType, order);
-                if (delete) {
-                    file.delete();
-                }
-            }
-        }
-    }
-    //-----------------------------------group 1 end--------------------------------
-
-
-    public void unrarNoFile(ReaderHandler handler) throws Exception {
-        unrarNoFile(handler, true);
-    }
-
-    public void unrarNoFile(ReaderHandler handler, boolean delete) throws Exception {
-        File[] files = new File(saveDir).listFiles();
+    public void parse(BatchPool<Map<String , FieldSpecification>> pool, LineProcessor lineProcessor, boolean delCsv) throws Exception{
+        File[] files = FileComparator.sort(unzipDir);
+        Parser parser = new Parser();
         if (files != null) {
-            Arrays.sort(files);
-//            WeChatFare weChatFare = new WeChatFare(logMapper);
-            DecompressFile unrarFile = new UnrarFile("GBK");
             for (File file : files) {
-                String name = file.getName();
-                String order = fileSelector.getOrder(name);
-                if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
-                    DecompressFile decompressFile = new ParserLoggerProxy(logMapper, this.fileType, name, unrarFile)
-//                            .parserSend(weChatFare)
-                            .getTarget();
-                    decompressFile.doWith(file, "", handler);
-                    config.updateOrder(fileType, order);
-                    if (delete) {
-                        file.delete();
+                if (!file.isDirectory()) {
+                    String name = file.getName();
+                    String order = fileSelector.getOrder(name);
+                    if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
+                        if(logMapper == null) {
+                            parser.doWith(file, pool, lineProcessor);
+                        } else {
+                            IParser iParser = new ParserLoggerProxy(logMapper, this.fileType, name, parser).getTarget();
+                            iParser.doWith(file, pool, lineProcessor);
+                        }
+                        config.updateOrder(fileType, order);
+                        if(delCsv) {
+                            file.delete();
+                        }
                     }
                 }
-            }
-        }
-    }
-
-    //本地测试
-    public void unrarNoFileNoLog(ReaderHandler handler) throws Exception {
-        File[] files = new File(saveDir).listFiles();
-        if (files != null) {
-            Arrays.sort(files);
-            DecompressFile unrarFile = new UnrarFile("GBK");
-            DecompressFactory factory = new DecompressFactory(unrarFile, handler);
-            for (File file : files) {
-                String name = file.getName();
-                if (fileSelector.acceptFile(name)) {
-                    factory.decompressNoFile(file);
-                }
-            }
-        }
-    }
-
-    //本地测试
-    public <T> void parseNoLog(String dir, LineProcessor<T> lineProcessor) throws Exception {
-        File[] files = new File(dir).listFiles();
-        assert files != null;
-        for (File file : files) {
-            String name = file.getName();
-            if (fileSelector.acceptFile(name)) {
-                FileProcessor.getInstance().process(file, lineProcessor);
             }
         }
     }
@@ -212,9 +168,6 @@ public class SteerableParserIntegrator {
         }
     }
 
-    /**
-     * 单文件可能对应多表，需要多个insert对象
-     */
     public class Insert {
 
         private String tableName;
@@ -232,7 +185,7 @@ public class SteerableParserIntegrator {
         }
 
         public BatchPool<Map<String, FieldSpecification>> getBatchInsert() {
-            return getBatchInsert(2);
+            return getBatchInsert(700);
         }
 
         public BatchPool<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {
@@ -240,8 +193,12 @@ public class SteerableParserIntegrator {
         }
 
         public void insertOne(Map<String, FieldSpecification> fieldSpecifications) throws DataAccessException {
-            String sql = config.insertSqlGenerator(tableName, fieldSpecifications);
-            jdbcTemplate.update(sql);
+            try {
+                String sql = config.insertSqlGenerator(tableName, fieldSpecifications);
+                jdbcTemplate.update(sql);
+            }catch (DuplicateKeyException ignore) {
+
+            }
         }
 
         public void insertOneWithUpdate(Map<String, FieldSpecification> fieldSpecifications) throws DataAccessException {

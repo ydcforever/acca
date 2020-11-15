@@ -45,7 +45,7 @@ public final class FTPAccessor {
      * @throws Exception
      */
     public static void accessWithFtpFileProcessor(String host, int port, String user, String password,
-                          FileSelector fileSelector, String downloadDir, boolean binary, String... ftpDir) throws Exception {
+                                                  FileSelector fileSelector, String downloadDir, boolean binary, String... ftpDir) throws Exception {
         FTPFileProcessor ftpFileProcessor = new FTPFileProcessor() {
             @Override
             public void doWith(FTPClient ftp, FTPFile[] files, String downloadDir) throws Exception {
@@ -151,9 +151,8 @@ public final class FTPAccessor {
                     String order = FileSelector.getOrder(remoteFileName, fileSelector.getRegexp());
                     if (fileSelector.acceptOrder(order)) {
                         find = true;
-                        long remoteFileLength = file.getSize();
                         File localFile = new File(downloadDir + File.separator + remoteFileName);
-                        downloadWithRetry(ftp, remoteFileName, remoteFileLength, localFile);
+                        downloadWithRetry(ftp, remoteFileName, file, localFile);
                     }
                 }
             }
@@ -164,7 +163,7 @@ public final class FTPAccessor {
     /**
      * Retrieve file from FTP server.
      */
-    public static void downloadWithRetry(FTPClient ftp, String remoteFileName, long remoteFileLength, File localFile) throws Exception {
+    public static void downloadWithRetry(FTPClient ftp, String remoteFileName, FTPFile ftpFile, File localFile) throws Exception {
         LOG.info("Began to download [{}] ...", remoteFileName);
         FileOutputStream localFOS = null;
         boolean redo = true;
@@ -179,6 +178,7 @@ public final class FTPAccessor {
                     localFOS.close();
                 }
                 long len = localFile.length();
+                long remoteFileLength = ftpFile.getSize();
                 if (len == 0 || len != remoteFileLength) {
                     LOG.warn("Remote file length is {}, local file length is {}", remoteFileLength, len);
                     localFile.delete();

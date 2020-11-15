@@ -171,7 +171,7 @@ public final class FieldSpecification implements Serializable, Cloneable{
     }
 
     public void setValByPos(String[] value) {
-        this.val = value[this.pos - 1];
+        this.val = value[this.pos - 1].trim();
     }
 
     public FieldSpecification define(String col) {

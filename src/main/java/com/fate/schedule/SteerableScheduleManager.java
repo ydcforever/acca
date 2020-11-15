@@ -50,7 +50,8 @@ public class SteerableScheduleManager implements BeanPostProcessor, Ordered, Dis
         taskScheduler = new ThreadPoolTaskScheduler();
         taskScheduler.setPoolSize(poolSize);
         taskScheduler.initialize();
-        taskScheduler.getScheduledThreadPoolExecutor().setRemoveOnCancelPolicy(false);
+        taskScheduler.setDaemon(true);
+        taskScheduler.setThreadNamePrefix("SteerableSchedule-");
         taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
         taskScheduler.setAwaitTerminationSeconds(60);
     }
@@ -129,15 +130,11 @@ public class SteerableScheduleManager implements BeanPostProcessor, Ordered, Dis
         }
     }
 
-    /**
-     *
-     * @param interruptRunning true will wait job until finish, false will shutdown immediately
-     */
-    public synchronized void stopSchedule(boolean interruptRunning) {
+    public synchronized void stopSchedule(boolean mayInterruptIfRunning) {
         for(Map.Entry<String, ScheduledFuture<?>> entry : futures.entrySet()) {
             ScheduledFuture<?> future = entry.getValue();
             if(!future.isCancelled()) {
-                future.cancel(interruptRunning);
+                future.cancel(mayInterruptIfRunning);
             }
         }
         futures.clear();

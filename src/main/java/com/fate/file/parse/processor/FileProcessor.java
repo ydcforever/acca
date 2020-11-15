@@ -8,36 +8,29 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-public final class FileProcessor implements IFileProcessor {
+public final class FileProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileProcessor.class);
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
-    private FileProcessor(){}
-
-    private static class Builder{
-        private static final FileProcessor INSTANCE = new FileProcessor();
+    private FileProcessor() {
     }
 
-    public static FileProcessor getInstance(){
-        return Builder.INSTANCE;
-    }
-
-    public void process(String filePath, LineProcessor lineParser) throws Exception {
+    public static void process(String filePath, LineProcessor lineParser) throws Exception {
         process(filePath, lineParser, null);
     }
 
-    public <T> void process(String filePath, LineProcessor<T> lineParser, T global) throws Exception {
+    public static <T> void process(String filePath, LineProcessor<T> lineParser, T global) throws Exception {
         File file = new File(filePath);
         process(file, lineParser, global);
     }
 
-    public void process(File file, LineProcessor lineParser) throws Exception {
+    public static void process(File file, LineProcessor lineParser) throws Exception {
         process(file, lineParser, null);
     }
 
-    public <T> void process(File file, LineProcessor<T> lineParser, T global) throws Exception {
+    public static <T> void process(File file, LineProcessor<T> lineParser, T global) throws Exception {
         process(file, lineParser, 0, global);
     }
 
@@ -49,7 +42,7 @@ public final class FileProcessor implements IFileProcessor {
      * @param <T>
      * @throws Exception
      */
-    public <T> void process(File file, LineProcessor<T> lineParser, int interruptLineNo, T global) throws Exception {
+    public static <T> void process(File file, LineProcessor<T> lineParser, int interruptLineNo, T global) throws Exception {
         if (file.length() > 0) {
             String line;
             int lineNo = 1;
@@ -68,7 +61,7 @@ public final class FileProcessor implements IFileProcessor {
                         lineNo++;
                     } catch (Exception e) {
                         LOG.error("the [{}] at {} line parse failure!", fileName, lineNo);
-                        throw new Exception(fileName + "->" + lineNo + ":" + line + " parse failure! " + e.getMessage());
+                        throw new Exception(fileName + "->" + lineNo + " parse failure! " + e.getMessage());
                     }
                 }
                 LOG.info("------------------Complete process file [{}]", fileName);

@@ -16,26 +16,15 @@ public final class AccaUtils {
 
     /**
      * 批量插入
-     * @param ftype
-     * @param ctxName
-     * @param jdbcTemplate
-     * @param parserlogMapper
-     * @param rar5
-     * @throws Exception
      */
     public static void parser(String ftype, String ctxName, JdbcTemplate jdbcTemplate, ParserLogMapper parserlogMapper, boolean rar5) throws Exception {
         final SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, ftype).logMapper(parserlogMapper);
         if(integrator.isValid()) {
-            //增加rar5区分
-            if(!rar5){
-                integrator.download();
-                //不支持rar5
-                integrator.unrarFile(false);
-            }
+            integrator.download();
             final SteerableParserIntegrator.Insert config = integrator.new Insert(ctxName);
             Map<String, FieldSpecification> map = config.getFieldSpecification();
             map.put("SOURCE_NAME", new FieldSpecification().define("SOURCE_NAME"));
-            BatchPool<Map<String , FieldSpecification>> pool = config.getBatchInsert();
+            BatchPool<Map<String , FieldSpecification>> pool = config.getBatchInsert(700);
             pool.init(map);
             LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
                 @Override
@@ -46,38 +35,12 @@ public final class AccaUtils {
                     pool.tryBatch();
                 }
             };
-            integrator.parse(lineProcessor, true);
-            pool.restBatch();
-        }
-    }
 
-    /**
-     * 单行插入
-     * @param ftype
-     * @param ctxName
-     * @param jdbcTemplate
-     * @param parserlogMapper
-     * @throws Exception
-     */
-    public static void parser1(String ftype, String ctxName, JdbcTemplate jdbcTemplate, ParserLogMapper parserlogMapper) throws Exception {
-        final SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, ftype).logMapper(parserlogMapper);
-        if(integrator.isValid()) {
-            //integrator.download();
-            //integrator.unrarFile(false);
-            final SteerableParserIntegrator.Insert config = integrator.new Insert(ctxName);
-            Map<String, FieldSpecification> map = config.getFieldSpecification();
-            map.put("SOURCE_NAME", new FieldSpecification().define("SOURCE_NAME"));
-            LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
-                @Override
-                public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
-                    if(lineNo == 1) {
-                        map.get("SOURCE_NAME").setVal(fileName);
-                    }
-                    splitBySpacer(line, map);
-                    config.insertOne(map);
-                }
-            };
-            integrator.parse(lineProcessor, false);
+            integrator.unrarAndParse(pool, lineProcessor, false, true);
+
+            integrator.parse(pool, lineProcessor, true);
+
+            pool.destroy();
         }
     }
 
@@ -89,7 +52,7 @@ public final class AccaUtils {
             if(!field.isDefine()){
                 field.clear();
                 if(field.getPos() <= len) {
-                    field.setVal(fields[field.getPos() - 1].replace("\"", ""));
+                    field.setVal(fields[field.getPos() - 1].replace("\"", "").trim());
                 }
             }
         }

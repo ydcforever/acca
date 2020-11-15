@@ -17,7 +17,7 @@ public abstract class AbstractSteerableConfig {
 
     public abstract void updateOrder(String fileType, String order);
 
-    public abstract  Map<String, FieldSpecification> loadTableStruct(String contextName);
+    public abstract Map<String, FieldSpecification> loadTableStruct(String contextName);
 
     public String insertSqlGenerator(String tableName, Map<String, FieldSpecification> row) {
         StringBuilder colBuilder = new StringBuilder();
