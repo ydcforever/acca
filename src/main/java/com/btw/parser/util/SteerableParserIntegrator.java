@@ -2,7 +2,9 @@ package com.btw.parser.util;
 
 import com.btw.parser.mapper.ParserLogMapper;
 import com.fate.file.parse.DBSteerableConfig;
+import com.fate.file.parse.batch.BatchInsertDB;
 import com.fate.file.parse.batch.BatchPool;
+import com.fate.file.parse.batch.SteerableBatchMethod;
 import com.fate.file.parse.processor.LineProcessor;
 import com.fate.file.parse.steerable.FieldSpecification;
 import com.fate.file.transfer.FileSelector;
@@ -42,6 +44,10 @@ public class SteerableParserIntegrator {
 
     private ParserLogMapper logMapper = null;
 
+    public boolean openDownload;
+
+    public boolean openDecompress;
+
     public SteerableParserIntegrator() {
     }
 
@@ -56,6 +62,8 @@ public class SteerableParserIntegrator {
             this.ftpFactory = new FTPFactory(info);
             this.splitType = info.get("PARSE_TYPE").toString();
             this.saveDir = info.get("SAVE_DIR").toString();
+            this.openDecompress = info.get("OPEN_DECOMPRESS").toString().equals("Y");
+            this.openDownload = info.get("OPEN_DOWNLOAD").toString().equals("Y");
             Object unDir = info.get("UNZIP_DIR");
             if (unDir != null) {
                 this.unzipDir = unDir.toString();
@@ -102,7 +110,13 @@ public class SteerableParserIntegrator {
                     String name = file.getName();
                     String order = fileSelector.getOrder(name);
                     if (fileSelector.acceptFile(name) && fileSelector.acceptOrder(order)) {
-                        Unrar5.window(file.getPath(), this.unzipDir, "G:\\WinRar\\WinRAR.exe");
+                        String osName = System.getProperty("os.name");
+                        if(osName.toLowerCase().contains("windows")){
+                            Unrar5.window(file.getPath(), this.unzipDir, "G:\\WinRar\\WinRAR.exe");
+                        } else {
+                            Unrar5.linux(file.getPath(), this.unzipDir);
+                        }
+                        Thread.sleep(3000);
                         File newFile = new File(this.unzipDir + File.separator + name.replace("rar", "csv"));
                         if(logMapper == null) {
                             parser.doWith(newFile, pool, lineProcessor);
@@ -186,6 +200,13 @@ public class SteerableParserIntegrator {
 
         public BatchPool<Map<String, FieldSpecification>> getBatchInsert() {
             return getBatchInsert(700);
+        }
+
+        public BatchPool<Map<String, FieldSpecification>> getBatchInsert(Map<String, FieldSpecification> map, int batchSize){
+            BatchInsertDB<Map<String, FieldSpecification>> batchInsertDB = new SteerableBatchMethod(tableName, map, jdbcTemplate);
+            BatchPool<Map<String, FieldSpecification>>  pool = new BatchPool<>(tableName, batchInsertDB, batchSize);
+            pool.init(map);
+            return pool;
         }
 
         public BatchPool<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {

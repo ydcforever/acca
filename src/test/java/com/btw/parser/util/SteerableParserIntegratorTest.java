@@ -32,9 +32,9 @@ public class SteerableParserIntegratorTest {
     public void testUnrarNoFile() throws Exception {
 
 //        AccaUtils.parser("D_IP_OPRA", "ACCA_OPRA_D", jdbcTemplate, parserlogMapper);
-//        AccaUtils.parser("D_IP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper);
+        AccaUtils.parser("D_DP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper, false);
 //        AccaUtils.parser("M_IP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper);
-          AccaUtils.parser("D_IP_PRA", "ACCA_PRA_D", jdbcTemplate, parserlogMapper, false);
+//          AccaUtils.parser("D_IP_PRA", "ACCA_PRA_D", jdbcTemplate, parserlogMapper, false);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class SteerableParserIntegratorTest {
     @Test
     public void testCsvParser() throws Exception {
         String filePath = "C:\\Users\\T440\\Desktop\\beans\\unzip\\D_DP_UPL_20190401.csv";
-        FileProcessor.getInstance().process(new File(filePath), new LineProcessor() {
+        FileProcessor.process(new File(filePath), new LineProcessor() {
             @Override
             public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
                 System.out.println(line);
@@ -97,7 +97,7 @@ public class SteerableParserIntegratorTest {
                 pool.tryBatch();
             }
         };
-        FileProcessor.getInstance().process("C:\\Users\\T440\\Desktop\\beans\\unzip\\M_IP_SAL_201907_20190811.csv", lineProcessor);
+        FileProcessor.process("C:\\Users\\T440\\Desktop\\beans\\unzip\\M_IP_SAL_201907_20190811.csv", lineProcessor);
         pool.restBatch();
     }
 
@@ -116,7 +116,7 @@ public class SteerableParserIntegratorTest {
                 pool.tryBatch();
             }
         };
-        integrator.parseNoLog("C:\\Users\\T440\\Desktop\\beans\\unzip", lineProcessor);
+//        integrator.parseNoLog("C:\\Users\\T440\\Desktop\\beans\\unzip", lineProcessor);
         pool.restBatch();
     }
 

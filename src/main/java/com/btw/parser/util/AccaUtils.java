@@ -4,6 +4,8 @@ import com.btw.parser.mapper.ParserLogMapper;
 import com.fate.file.parse.batch.BatchPool;
 import com.fate.file.parse.processor.LineProcessor;
 import com.fate.file.parse.steerable.FieldSpecification;
+import com.fate.log.ParserLogger;
+import com.fate.log.ParserLoggerProxy;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Collection;
@@ -20,26 +22,32 @@ public final class AccaUtils {
     public static void parser(String ftype, String ctxName, JdbcTemplate jdbcTemplate, ParserLogMapper parserlogMapper, boolean rar5) throws Exception {
         final SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, ftype).logMapper(parserlogMapper);
         if(integrator.isValid()) {
-            integrator.download();
+            if(integrator.openDownload){
+                integrator.download();
+            }
             final SteerableParserIntegrator.Insert config = integrator.new Insert(ctxName);
+
             Map<String, FieldSpecification> map = config.getFieldSpecification();
             map.put("SOURCE_NAME", new FieldSpecification().define("SOURCE_NAME"));
-            BatchPool<Map<String , FieldSpecification>> pool = config.getBatchInsert(700);
-            pool.init(map);
+
+            BatchPool<Map<String , FieldSpecification>> pool = config.getBatchInsert(map, 700);
+
             LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
                 @Override
                 public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
                     Map<String, FieldSpecification> row = pool.getBatchRow();
                     row.get("SOURCE_NAME").setVal(fileName);
                     splitBySpacer(line, row);
-                    pool.tryBatch();
+                    try{
+                        pool.tryBatch();
+                    } catch (Exception e){
+                        ParserLogger parserLogger = new ParserLogger(ftype, fileName, parserlogMapper);
+                        parserLogger.setExcp(lineNo + ":" + ParserLoggerProxy.subMessage(e.getMessage()));
+                        parserLogger.start();
+                    }
                 }
             };
-
             integrator.unrarAndParse(pool, lineProcessor, false, true);
-
-            integrator.parse(pool, lineProcessor, true);
-
             pool.destroy();
         }
     }

@@ -18,7 +18,8 @@ import java.util.Map;
  */
 public final class DBSteerableConfig extends AbstractSteerableConfig {
     private static final String QUERY_FILE_STORAGE = "select t.addr_type, t.server_dir, t.save_dir, t.unzip_dir, " +
-            "t.begin_flag, t.end_flag, t.parse_type, t.feature, t.regexp, f.addr, f.port, f.user_name, f.pswd" +
+            "t.begin_flag, t.end_flag, t.parse_type, t.feature, t.regexp, f.addr, f.port, f.user_name," +
+            " f.pswd,t.open_download, t.open_decompress " +
             "  from PARSER_FILE_STORAGE t" +
             "  left join PARSER_FTP_INFO f" +
             "    on t.addr_id = f.addr_id" +

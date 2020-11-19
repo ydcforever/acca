@@ -1,6 +1,5 @@
 package com.btw.parser.controller;
-
-import com.btw.parser.util.JsonUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,8 @@ public class ParserConfigControllerTest {
     @Test
     public void testQuery() throws Exception {
         Map<String, Object> map = jdbcTemplate.queryForMap(QUERY_SQL, new Object[]{"D_DP_SL"});
-        String s = JsonUtil.map2json(map);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String s = objectMapper.writeValueAsString(map);
         System.out.println(s);
     }
 
