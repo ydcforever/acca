@@ -2,16 +2,13 @@ package com.btw.parser.util;
 
 import com.btw.parser.mapper.ParserLogMapper;
 import com.fate.file.parse.DBSteerableConfig;
-import com.fate.file.parse.batch.BatchInsertDB;
 import com.fate.file.parse.batch.BatchPool;
-import com.fate.file.parse.batch.SteerableBatchMethod;
 import com.fate.file.parse.processor.LineProcessor;
 import com.fate.file.parse.steerable.FieldSpecification;
+import com.fate.file.parse.steerable.SteerableInsert;
 import com.fate.file.transfer.FileSelector;
 import com.fate.file.utils.FileComparator;
 import com.fate.log.ParserLoggerProxy;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
@@ -182,59 +179,22 @@ public class SteerableParserIntegrator {
         }
     }
 
-    public class Insert {
+    public SteerableInsert getSteerableInsert(){
+        return getSteerableInsert(fileType);
+    }
 
-        private String tableName;
+    public SteerableInsert getSteerableInsert(String contextName){
+        Map<String, FieldSpecification> struct = getFieldSpecification(contextName);
+        return getSteerableInsert(contextName, struct);
+    }
 
-        private Map<String, FieldSpecification> specifications;
+    public SteerableInsert getSteerableInsert(String contextName, Map<String, FieldSpecification> struct){
+        String tableName = config.queryTableName(fileType, contextName);
+        return new SteerableInsert(jdbcTemplate, tableName, struct);
+    }
 
-        public Insert() {
-            this.tableName = config.queryTableName(fileType, fileType);
-            this.specifications = config.loadTableStruct(fileType);
-        }
-
-        public Insert(String contextName) {
-            this.tableName = config.queryTableName(fileType, contextName);
-            this.specifications = config.loadTableStruct(contextName);
-        }
-
-        public BatchPool<Map<String, FieldSpecification>> getBatchInsert() {
-            return getBatchInsert(700);
-        }
-
-        public BatchPool<Map<String, FieldSpecification>> getBatchInsert(Map<String, FieldSpecification> map, int batchSize){
-            BatchInsertDB<Map<String, FieldSpecification>> batchInsertDB = new SteerableBatchMethod(tableName, map, jdbcTemplate);
-            BatchPool<Map<String, FieldSpecification>>  pool = new BatchPool<>(tableName, batchInsertDB, batchSize);
-            pool.init(map);
-            return pool;
-        }
-
-        public BatchPool<Map<String, FieldSpecification>> getBatchInsert(int batchSize) {
-            return config.createBatchPool(tableName, batchSize);
-        }
-
-        public void insertOne(Map<String, FieldSpecification> fieldSpecifications) throws DataAccessException {
-            try {
-                String sql = config.insertSqlGenerator(tableName, fieldSpecifications);
-                jdbcTemplate.update(sql);
-            }catch (DuplicateKeyException ignore) {
-
-            }
-        }
-
-        public void insertOneWithUpdate(Map<String, FieldSpecification> fieldSpecifications) throws DataAccessException {
-            String sql = config.insertSqlGenerator(tableName, fieldSpecifications);
-            try {
-                jdbcTemplate.update(sql);
-            } catch (DuplicateKeyException e) {
-                String updateSql = config.updateSqlGenerator(tableName, fieldSpecifications);
-                jdbcTemplate.update(updateSql);
-            }
-        }
-
-        public Map<String, FieldSpecification> getFieldSpecification() {
-            return specifications;
-        }
+    public Map<String, FieldSpecification> getFieldSpecification(String contextName){
+        return config.loadTableStruct(contextName);
     }
 }
 

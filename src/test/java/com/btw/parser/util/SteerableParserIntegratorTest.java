@@ -6,6 +6,7 @@ import com.fate.file.parse.batch.BatchPool;
 import com.fate.file.parse.processor.FileProcessor;
 import com.fate.file.parse.processor.LineProcessor;
 import com.fate.file.parse.steerable.FieldSpecification;
+import com.fate.file.parse.steerable.SteerableInsert;
 import com.fate.log.ParserLoggerProxy;
 import com.github.junrar.Junrar;
 import org.junit.Test;
@@ -58,7 +59,7 @@ public class SteerableParserIntegratorTest {
     @Deprecated
     public void testLog() throws Exception{
         SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, "M_DP_TAX").logMapper(parserlogMapper);
-        final SteerableParserIntegrator.Insert config = integrator.new Insert("ACCA_TAX_DP");
+        final SteerableInsert config = integrator.getSteerableInsert("ACCA_TAX_DP");
         ReaderHandler handler = new NoFileReaderHandler<>(new LineProcessor<Object>() {
             @Override
             public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
@@ -85,10 +86,8 @@ public class SteerableParserIntegratorTest {
     @Test
     public void testParserNoLog() throws Exception {
         SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, "M_IP_SAL");
-        final SteerableParserIntegrator.Insert config = integrator.new Insert("ACCA_SAL");
-        Map<String, FieldSpecification> map = config.getFieldSpecification();
-        BatchPool<Map<String, FieldSpecification>> pool = config.getBatchInsert(1000);
-        pool.init(map);
+        final SteerableInsert config = integrator.getSteerableInsert("ACCA_SAL");
+        BatchPool<Map<String, FieldSpecification>> pool = config.createBatchPool(1000);
         LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
             @Override
             public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
@@ -104,10 +103,8 @@ public class SteerableParserIntegratorTest {
     @Test
     public void testParserDirNoLog() throws Exception {
         SteerableParserIntegrator integrator = new SteerableParserIntegrator(jdbcTemplate, "M_DP_SAL");
-        final SteerableParserIntegrator.Insert config = integrator.new Insert("ACCA_SAL");
-        Map<String, FieldSpecification> map = config.getFieldSpecification();
-        BatchPool<Map<String, FieldSpecification>> pool = config.getBatchInsert(1000);
-        pool.init(map);
+        final SteerableInsert config = integrator.getSteerableInsert("ACCA_SAL");
+        BatchPool<Map<String, FieldSpecification>> pool = config.createBatchPool(1000);
         LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
             @Override
             public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {

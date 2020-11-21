@@ -4,6 +4,7 @@ import com.btw.parser.mapper.ParserLogMapper;
 import com.fate.file.parse.batch.BatchPool;
 import com.fate.file.parse.processor.LineProcessor;
 import com.fate.file.parse.steerable.FieldSpecification;
+import com.fate.file.parse.steerable.SteerableInsert;
 import com.fate.log.ParserLogger;
 import com.fate.log.ParserLoggerProxy;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,13 +26,11 @@ public final class AccaUtils {
             if(integrator.openDownload){
                 integrator.download();
             }
-            final SteerableParserIntegrator.Insert config = integrator.new Insert(ctxName);
-
-            Map<String, FieldSpecification> map = config.getFieldSpecification();
+            Map<String, FieldSpecification> map = integrator.getFieldSpecification(ctxName);
             map.put("SOURCE_NAME", new FieldSpecification().define("SOURCE_NAME"));
 
-            BatchPool<Map<String , FieldSpecification>> pool = config.getBatchInsert(map, 700);
-
+            final SteerableInsert config = integrator.getSteerableInsert(ctxName, map);
+            BatchPool<Map<String , FieldSpecification>> pool = config.createBatchPool(700);
             LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
                 @Override
                 public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
@@ -42,6 +41,7 @@ public final class AccaUtils {
                         pool.tryBatch();
                     } catch (Exception e){
                         ParserLogger parserLogger = new ParserLogger(ftype, fileName, parserlogMapper);
+                        parserLogger.setStatus("C");
                         parserLogger.setExcp(lineNo + ":" + ParserLoggerProxy.subMessage(e.getMessage()));
                         parserLogger.start();
                     }

@@ -10,6 +10,8 @@ import java.util.List;
 
 /**
  * Created by ydc on 2020/9/11.
+ * Build pool by cloning object step by step when the size of pool no more than batch size.
+ * If the pool is no longer in use, it must be destroy
  */
 public final class BatchPool<T> implements Serializable, DisposableBean {
 
@@ -25,26 +27,18 @@ public final class BatchPool<T> implements Serializable, DisposableBean {
 
     private String tableName;
 
-    private BatchInsertDB<T> insertDB;
+    private BatchMethod<T> batchMethod;
 
-    public BatchPool(String tableName, BatchInsertDB<T> insertDB, int batchSize) {
+    public BatchPool(String tableName, BatchMethod<T> batchMethod, T t, int batchSize) {
         this.batchSize = batchSize;
         this.tableName = tableName;
-        this.insertDB = insertDB;
-    }
-
-    public int getBatchSize() {
-        return batchSize;
-    }
-
-    public BatchPool<T> init(T t) {
-        pool = new LinkedList<>();
+        this.batchMethod = batchMethod;
+        this.pool = new LinkedList<>();
         this.t = t;
-        return this;
     }
 
-    public T getBatchRow() throws Exception {
-        if (pool.size() < batchSize) {
+    public T getBatchRow() {
+        if(pool.size() < batchSize) {
             T clone = clone(t);
             pool.add(clone);
         }
@@ -57,7 +51,7 @@ public final class BatchPool<T> implements Serializable, DisposableBean {
     public void tryBatch() throws Exception {
         if (offset == batchSize) {
             LOG.info("[{}] meet the batch size and begin to insert.", tableName);
-            insertDB.doWith(tableName, pool);
+            batchMethod.insert(pool);
             LOG.info("[{}] complete batch insert.");
         }
     }
@@ -66,7 +60,7 @@ public final class BatchPool<T> implements Serializable, DisposableBean {
         if (offset > 0 && offset < batchSize) {
             LOG.info("Begin to insert " + tableName + " rest record :" + offset);
             try {
-                insertDB.doWith(tableName, pool.subList(0, offset));
+                batchMethod.insert(pool.subList(0, offset));
                 LOG.info("Complete insert [{}] rest record.", tableName);
             } finally {
                 offset = 0;
@@ -83,7 +77,7 @@ public final class BatchPool<T> implements Serializable, DisposableBean {
             obs.close();
             ByteArrayInputStream ios = new ByteArrayInputStream(out.toByteArray());
             ObjectInputStream ois = new ObjectInputStream(ios);
-            cloneObj = (T) ois.readObject();
+            cloneObj = (T)ois.readObject();
             ois.close();
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,22 +1,19 @@
 package com.fate.file.parse;
 
-import com.fate.file.parse.batch.BatchInsertDB;
-import com.fate.file.parse.batch.BatchPool;
-import com.fate.file.parse.steerable.AbstractSteerableConfig;
 import com.fate.file.parse.steerable.FieldSpecification;
+import com.fate.file.parse.steerable.SteerableConfig;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by ydc on 2020/1/14.
  */
-public final class DBSteerableConfig extends AbstractSteerableConfig {
+public final class DBSteerableConfig implements SteerableConfig {
     private static final String QUERY_FILE_STORAGE = "select t.addr_type, t.server_dir, t.save_dir, t.unzip_dir, " +
             "t.begin_flag, t.end_flag, t.parse_type, t.feature, t.regexp, f.addr, f.port, f.user_name," +
             " f.pswd,t.open_download, t.open_decompress " +
@@ -74,16 +71,5 @@ public final class DBSteerableConfig extends AbstractSteerableConfig {
             }
         });
         return map;
-    }
-
-    public BatchPool<Map<String, FieldSpecification>> createBatchPool(String tableName, int batchSize) {
-        BatchInsertDB<Map<String, FieldSpecification>> insertDB = new BatchInsertDB<Map<String, FieldSpecification>>() {
-            @Override
-            public void doWith(String tableName, List<Map<String, FieldSpecification>> list) throws Exception {
-                String sql = batchInsertGenerator(tableName, list);
-                jdbcTemplate.update(sql);
-            }
-        };
-        return new BatchPool<>(tableName, insertDB, batchSize);
     }
 }
