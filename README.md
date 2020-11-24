@@ -2,6 +2,7 @@
 ACCA数据定时解析
 
 注意事项
+
 a.由于定时操作会有线程并发，使用jdbcTemplate时请勿混用
 
 b.日志代理需要代理接口，自定义解析接口
@@ -9,6 +10,7 @@ b.日志代理需要代理接口，自定义解析接口
 c.定时任务配置：spring 配置SteerableScheduleManager，web.xml配置监听SteerableScheduleListener
 
 使用说明
+
 1.AccaUtils 提供适应性解析方法
 
 2.SteerableParserIntegrator 提供解析集成方法
