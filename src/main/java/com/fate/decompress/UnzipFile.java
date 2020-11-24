@@ -24,7 +24,7 @@ public class UnzipFile implements DecompressFile {
             realSize = ze.getSize();
             if (realSize > 0) {
                 br = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)));
-                handler.doReader(file.getName(), saveDir, br);
+                handler.doReader(br, file.getName(), saveDir, br);
             }
         }  finally {
             releaseResources(zf, zis, br);

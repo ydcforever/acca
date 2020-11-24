@@ -33,7 +33,7 @@ public class ParserConfigController {
             Map<String, Object> map = jdbcTemplate.queryForMap(QUERY_SQL, new Object[]{id});
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.writeValueAsString(map);
-        }catch (Exception e){
+        }catch (Exception ignored){
         }
         return "";
     }

@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class SteerableParserIntegratorTest {
     public void testUnrarNoFile() throws Exception {
 
 //        AccaUtils.parser("D_IP_OPRA", "ACCA_OPRA_D", jdbcTemplate, parserlogMapper);
-        AccaUtils.parser("D_DP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper, false);
+        AccaUtils.parser("D_DP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper);
 //        AccaUtils.parser("M_IP_SAL", "ACCA_SAL", jdbcTemplate, parserlogMapper);
 //          AccaUtils.parser("D_IP_PRA", "ACCA_PRA_D", jdbcTemplate, parserlogMapper, false);
     }
@@ -49,7 +50,7 @@ public class SteerableParserIntegratorTest {
         String filePath = "C:\\Users\\T440\\Desktop\\beans\\unzip\\D_DP_UPL_20190401.csv";
         FileProcessor.process(new File(filePath), new LineProcessor() {
             @Override
-            public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
+            public void doWith(BufferedReader bufferedReader, String line, int lineNo, String fileName, Object global) throws Exception {
                 System.out.println(line);
             }
         });
@@ -62,7 +63,7 @@ public class SteerableParserIntegratorTest {
         final SteerableInsert config = integrator.getSteerableInsert("ACCA_TAX_DP");
         ReaderHandler handler = new NoFileReaderHandler<>(new LineProcessor<Object>() {
             @Override
-            public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
+            public void doWith(BufferedReader bufferedReader, String line, int lineNo, String fileName, Object global) throws Exception {
                 System.out.println(line);
             }
         });
@@ -90,7 +91,7 @@ public class SteerableParserIntegratorTest {
         BatchPool<Map<String, FieldSpecification>> pool = config.createBatchPool(1000);
         LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
             @Override
-            public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
+            public void doWith(BufferedReader bufferedReader, String line, int lineNo, String fileName, Object global) throws Exception {
                 Map<String, FieldSpecification> row = pool.getBatchRow();
                 AccaUtils.splitBySpacer(line, row);
                 pool.tryBatch();
@@ -107,7 +108,7 @@ public class SteerableParserIntegratorTest {
         BatchPool<Map<String, FieldSpecification>> pool = config.createBatchPool(1000);
         LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
             @Override
-            public void doWith(String line, int lineNo, String fileName, Object global) throws Exception {
+            public void doWith(BufferedReader bufferedReader, String line, int lineNo, String fileName, Object global) throws Exception {
                 Map<String, FieldSpecification> row = pool.getBatchRow();
                 AccaUtils.splitBySpacer(line, row);
                 pool.tryBatch();

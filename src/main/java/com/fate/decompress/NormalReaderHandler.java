@@ -17,7 +17,7 @@ public class NormalReaderHandler extends ReaderHandler {
      * @throws Exception
      */
     @Override
-    public void doReader(String filename, String saveDir, BufferedReader reader) throws Exception {
+    public void doReader(BufferedReader bufferedReader, String filename, String saveDir, BufferedReader reader) throws Exception {
         BufferedWriter bufferedWriter = null;
         String line;
         try {

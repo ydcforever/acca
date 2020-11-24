@@ -8,7 +8,7 @@ import java.io.BufferedWriter;
  */
 public abstract class ReaderHandler {
 
-    public abstract void doReader(String filename, String saveDir, BufferedReader reader) throws Exception;
+    public abstract void doReader(BufferedReader bufferedReader, String filename, String saveDir, BufferedReader reader) throws Exception;
 
 
     /**

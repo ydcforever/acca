@@ -50,7 +50,6 @@ public class SteerableScheduleManager implements BeanPostProcessor, Ordered, Dis
         taskScheduler = new ThreadPoolTaskScheduler();
         taskScheduler.setPoolSize(poolSize);
         taskScheduler.initialize();
-        taskScheduler.setDaemon(true);
         taskScheduler.setThreadNamePrefix("SteerableSchedule-");
         taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
         taskScheduler.setAwaitTerminationSeconds(60);

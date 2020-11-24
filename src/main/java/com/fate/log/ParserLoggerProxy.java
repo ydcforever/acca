@@ -68,6 +68,6 @@ public final class ParserLoggerProxy implements InvocationHandler {
     }
 
     public static String subMessage(String message){
-        return message.length() > 300 ? message.substring(0, 300) : message;
+        return message.length() > 2000 ? message.substring(0, 2000) : message;
     }
 }

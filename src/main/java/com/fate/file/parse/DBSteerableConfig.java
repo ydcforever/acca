@@ -14,6 +14,7 @@ import java.util.Map;
  * Created by ydc on 2020/1/14.
  */
 public final class DBSteerableConfig implements SteerableConfig {
+
     private static final String QUERY_FILE_STORAGE = "select t.addr_type, t.server_dir, t.save_dir, t.unzip_dir, " +
             "t.begin_flag, t.end_flag, t.parse_type, t.feature, t.regexp, f.addr, f.port, f.user_name," +
             " f.pswd,t.open_download, t.open_decompress " +

@@ -2,7 +2,6 @@ package com.btw.parser.util;
 
 import com.fate.file.transfer.FTPAccessor;
 import com.fate.file.transfer.FileSelector;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.io.File;
 import java.util.Map;
@@ -10,7 +9,7 @@ import java.util.Map;
 /**
  * Created by ydc on 2020/7/22.
  */
-public class FTPFactory implements InitializingBean {
+public class FTPFactory {
 
     private String username;
 
@@ -31,6 +30,7 @@ public class FTPFactory implements InitializingBean {
         this.port = port;
         this.serverDir = serverDir;
         this.saveDir = saveDir;
+        checkSaveDir(this.saveDir);
     }
 
     public FTPFactory(Map<String, Object> params) {
@@ -40,6 +40,7 @@ public class FTPFactory implements InitializingBean {
         this.port = Integer.parseInt(params.get("PORT").toString());
         this.serverDir = params.get("SERVER_DIR").toString();
         this.saveDir = params.get("SAVE_DIR").toString();
+        checkSaveDir(this.saveDir);
     }
 
 
@@ -57,11 +58,6 @@ public class FTPFactory implements InitializingBean {
 
     public void download(FTPAccessor.FTPFileProcessor ftpFileProcessor) throws Exception{
         FTPAccessor.access(host, port, username, password, ftpFileProcessor, saveDir, true, serverDir);
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        checkSaveDir(this.saveDir);
     }
 
     private void checkSaveDir(String path){

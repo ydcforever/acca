@@ -43,7 +43,7 @@ public class UnrarFile implements DecompressFile {
                             reader = new InputStreamReader(stream, charsetName);
                         }
                         BufferedReader br = new BufferedReader(reader);
-                        handler.doReader(fileHeader.getFileNameString(), saveDir, br);
+                        handler.doReader(br, fileHeader.getFileNameString(), saveDir, br);
                     }
                 }
             }

@@ -30,11 +30,11 @@ public class NoFileReaderHandler<T> extends ReaderHandler {
      * @throws Exception
      */
     @Override
-    public void doReader(String filename, String saveDir, BufferedReader reader) throws Exception {
+    public void doReader(BufferedReader bufferedReader, String filename, String saveDir, BufferedReader reader) throws Exception {
         int lineNo = 1;
         String line;
         while((line = reader.readLine()) != null){
-            lineProcessor.doWith(line, lineNo, filename, t);
+            lineProcessor.doWith(bufferedReader, line, lineNo, filename, t);
             lineNo++;
         }
     }

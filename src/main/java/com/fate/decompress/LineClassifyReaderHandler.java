@@ -38,7 +38,7 @@ public class LineClassifyReaderHandler extends ReaderHandler {
      * @throws Exception
      */
     @Override
-    public void doReader(String filename, String saveDir, BufferedReader reader) throws Exception{
+    public void doReader(BufferedReader bufferedReader, String filename, String saveDir, BufferedReader reader) throws Exception{
         String unzipPrefix = FilenameUtils.getBaseName(filename);
         String extension = FilenameUtils.getExtension(filename);
         Map<String, BufferedWriter> bufferedWriterMap = null;
