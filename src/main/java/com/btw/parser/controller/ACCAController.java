@@ -1,10 +1,6 @@
 package com.btw.parser.controller;
 
 import com.btw.parser.service.*;
-import com.btw.parser.service.DDpOpraService;
-import com.btw.parser.service.DDpPraService;
-import com.btw.parser.service.DIpOpraService;
-import com.btw.parser.service.DIpPraService;
 import com.fate.schedule.SteerableSchedule;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,16 +19,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ACCAController {
 
     @Autowired
-    private DDpOpraService dDpOpraService;
+    private IDpOpraService dDpOpraService;
 
     @Autowired
-    private DIpOpraService dIpOpraService;
+    private IIpOpraService dIpOpraService;
 
     @Autowired
-    private DDpPraService dDpPraService;
+    private IDpPraService dDpPraService;
 
     @Autowired
-    private DIpPraService dIpPraService;
+    private IIpPraService dIpPraService;
 
     @Autowired
     private DDpUplService dDpUplService;
