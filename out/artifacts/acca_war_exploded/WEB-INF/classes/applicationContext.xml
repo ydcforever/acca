@@ -35,7 +35,7 @@
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>classpath:/dev/jdbc.properties</value>
+                <value>classpath:/pro/jdbc.properties</value>
             </list>
         </property>
     </bean>

@@ -152,6 +152,7 @@ public class SteerableScheduleManager implements BeanPostProcessor, Ordered, Dis
     @Override
     public void destroy() throws Exception {
         stopSchedule(false);
+        taskScheduler.shutdown();
     }
 
     @Override

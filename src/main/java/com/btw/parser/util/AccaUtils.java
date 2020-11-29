@@ -37,7 +37,7 @@ public final class AccaUtils {
                 public void doWith(BufferedReader bufferedReader, String line, int lineNo, String fileName, Object global) throws Exception {
                     String tmpLine = line;
                     String nextLine;
-                    while (!tmpLine.endsWith("\"") && (nextLine = bufferedReader.readLine()) != null){
+                    while (!tmpLine.endsWith("\"") && (nextLine = bufferedReader.readLine()) != null) {
                         tmpLine += nextLine;
                         lineNo++;
                     }
@@ -54,37 +54,6 @@ public final class AccaUtils {
                     }
                 }
             };
-
-//            ReaderProcessor processor = new ReaderProcessor() {
-//                @Override
-//                public void doWith(BufferedReader bufferedReader, String fileName) throws Exception {
-//                    String line;
-//                    int lineNo = 1;
-//                    while ((line = bufferedReader.readLine()) != null) {
-//                        try {
-//                            String tmpLine = line;
-//                            String nextLine;
-//                            while (!tmpLine.endsWith("\"") && (nextLine = bufferedReader.readLine()) != null){
-//                                tmpLine += nextLine;
-//                                lineNo++;
-//                            }
-//                            Map<String, FieldSpecification> row = pool.getBatchRow();
-//                            row.get("SOURCE_NAME").setVal(fileName);
-//                            splitBySpacer(tmpLine, row);
-//                            try {
-//                                pool.tryBatch();
-//                            } catch (Exception e) {
-//                                ParserLogger parserLogger = new ParserLogger(ftype, fileName, parserlogMapper);
-//                                parserLogger.setStatus("C");
-//                                parserLogger.setExcp(lineNo + ":" + ParserLoggerProxy.subMessage(e.getMessage()));
-//                                parserLogger.start();
-//                            }       lineNo++;
-//                        } catch (Exception e) {
-//                            throw new Exception(fileName + "->" + lineNo + " parse failure! " + e.getMessage());
-//                        }
-//                    }
-//                }
-//            };
 
             integrator.unrarAndParse(pool, lineProcessor, false, true);
             pool.destroy();
