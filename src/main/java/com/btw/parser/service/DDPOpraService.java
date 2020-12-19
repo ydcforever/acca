@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
  * Created by ydc on 2020/11/29.
  */
 @Service
-public class IDpPraService {
+public class DDpOpraService {
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 

@@ -30,9 +30,14 @@ public final class AccaUtils {
             Map<String, FieldSpecification> map = integrator.getFieldSpecification(ctxName);
             map.put("SOURCE_NAME", new FieldSpecification().define("SOURCE_NAME"));
 
-            final SteerableInsert config = integrator.getSteerableInsert(ctxName, map);
+            final SteerableInsert config = integrator.getSteerableInsert(ctxName, map).preparedInsertSql(true);
             BatchPool<Map<String, FieldSpecification>> pool = config.createBatchPool(700);
             LineProcessor<Object> lineProcessor = new LineProcessor<Object>() {
+                @Override
+                public String getCharset() throws Exception {
+                    return "GBK";
+                }
+
                 @Override
                 public void doWith(BufferedReader bufferedReader, String line, int lineNo, String fileName, Object global) throws Exception {
                     String tmpLine = line;
@@ -54,7 +59,6 @@ public final class AccaUtils {
                     }
                 }
             };
-
             integrator.unrarAndParse(pool, lineProcessor, false, true);
             pool.destroy();
         }

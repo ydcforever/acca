@@ -14,28 +14,12 @@ public final class FileProcessor {
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
-    private FileProcessor() {
-    }
-
-    public static void process(String filePath, LineProcessor lineProcessor) throws Exception {
-        process(filePath, lineProcessor, null);
-    }
-
-    public static <T> void process(String filePath, LineProcessor<T> lineProcessor, T global) throws Exception {
-        File file = new File(filePath);
-        process(file, lineProcessor, global);
-    }
-
-    public static void process(File file, LineProcessor lineProcessor) throws Exception {
+    public static <T> void process(File file, LineProcessor<T> lineProcessor) throws Exception {
         process(file, lineProcessor, null);
     }
 
     public static <T> void process(File file, LineProcessor<T> lineProcessor, T global) throws Exception {
         process(file, lineProcessor, 0, global);
-    }
-
-    public static void process(String filePath, ReaderProcessor readerProcessor) throws Exception {
-        process(filePath, readerProcessor);
     }
 
     public static void process(File file, ReaderProcessor readerProcessor) throws Exception {
@@ -45,7 +29,9 @@ public final class FileProcessor {
             try {
                 String fileName = file.getName();
                 inputStream = new FileInputStream(file);
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream), BUFFER_SIZE);
+                String charset = readerProcessor.getCharset();
+                InputStreamReader reader = charset == null ? new InputStreamReader(inputStream) : new InputStreamReader(inputStream, charset);
+                bufferedReader = new BufferedReader(reader, BUFFER_SIZE);
                 LOG.info("------------------Begin to process file [{}] ", fileName);
                 readerProcessor.doWith(bufferedReader, fileName);
                 LOG.info("------------------Complete process file [{}]", fileName);
@@ -55,14 +41,6 @@ public final class FileProcessor {
         }
     }
 
-    /**
-     * @param file
-     * @param lineProcessor
-     * @param interruptLineNo continue when process had interrupt
-     * @param global
-     * @param <T>
-     * @throws Exception
-     */
     public static <T> void process(File file, LineProcessor<T> lineProcessor, int interruptLineNo, T global) throws Exception {
         if (file.length() > 0) {
             String line;
@@ -72,7 +50,9 @@ public final class FileProcessor {
             try {
                 String fileName = file.getName();
                 inputStream = new FileInputStream(file);
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream), BUFFER_SIZE);
+                String charset = lineProcessor.getCharset();
+                InputStreamReader reader = charset == null ? new InputStreamReader(inputStream) : new InputStreamReader(inputStream, charset);
+                bufferedReader = new BufferedReader(reader, BUFFER_SIZE);
                 LOG.info("------------------Begin to process file [{}] ", fileName);
                 while ((line = bufferedReader.readLine()) != null) {
                     try {
@@ -82,7 +62,7 @@ public final class FileProcessor {
                         lineNo++;
                     } catch (Exception e) {
                         LOG.error("the [{}] at {} line parse failure!", fileName, lineNo);
-                        throw new Exception(fileName + "->" + lineNo + " parse failure! " + e.getMessage());
+                        throw new Exception(fileName + "->" + lineNo + ":" + line + " parse failure! " + e.getMessage());
                     }
                 }
                 LOG.info("------------------Complete process file [{}]", fileName);

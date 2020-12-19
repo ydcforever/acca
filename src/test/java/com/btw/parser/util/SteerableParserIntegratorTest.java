@@ -97,7 +97,7 @@ public class SteerableParserIntegratorTest {
                 pool.tryBatch();
             }
         };
-        FileProcessor.process("C:\\Users\\T440\\Desktop\\beans\\unzip\\M_IP_SAL_201907_20190811.csv", lineProcessor);
+        FileProcessor.process(new File("C:\\Users\\T440\\Desktop\\beans\\unzip\\M_IP_SAL_201907_20190811.csv"), lineProcessor);
         pool.restBatch();
     }
 

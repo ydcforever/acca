@@ -37,7 +37,7 @@ public class UnrarFile implements DecompressFile {
                     if(size > 0) {
                         InputStream stream = archive.getInputStream(fileHeader);
                         InputStreamReader reader;
-                        if (charsetName.equals("") || charsetName == null) {
+                        if (charsetName == null || charsetName.isEmpty()) {
                             reader = new InputStreamReader(stream);
                         } else {
                             reader = new InputStreamReader(stream, charsetName);

@@ -1,6 +1,9 @@
 package com.fate.decompress;
 
+import com.fate.file.charset.FileCharset;
+
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -8,7 +11,17 @@ import java.util.zip.ZipInputStream;
 /**
  * Created by ydc on 2020/7/16.
  */
-public class UnzipFile implements DecompressFile {
+public class UnzipFile implements DecompressFile, FileCharset {
+
+    private String charsetName;
+
+    public UnzipFile(){
+
+    }
+
+    public UnzipFile(String charsetName) {
+        this.charsetName = charsetName;
+    }
 
     @Override
     public void doWith(File file, String saveDir, ReaderHandler handler) throws Exception{
@@ -18,7 +31,11 @@ public class UnzipFile implements DecompressFile {
         BufferedReader br = null;
         long realSize;
         try {
-            zf = new ZipFile(file);
+            if(charsetName == null || charsetName.isEmpty()){
+                zf = new ZipFile(file);
+            }else{
+                zf = new ZipFile(file, Charset.forName(charsetName));
+            }
             zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
             ze = zis.getNextEntry();
             realSize = ze.getSize();

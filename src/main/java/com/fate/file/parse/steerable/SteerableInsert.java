@@ -33,8 +33,29 @@ public class SteerableInsert {
         this.jdbcTemplate = jdbcTemplate;
         this.tableName = tableName;
         this.struct = struct;
+    }
+
+    public SteerableInsert preparedInsertSql(boolean ignorePrimaryKey){
         assemblingInsert = new LinkedList<>();
-        insertSql = SteerableJdbcTemplate.preparedInsertSql(tableName, struct, assemblingInsert);
+        if(ignorePrimaryKey){
+            String sql = "select t.constraint_name from user_constraints t where t.table_name = ? " +
+                    "and t.constraint_type = 'P' and t.status='ENABLED'";
+            String key = "";
+            try{
+                key = jdbcTemplate.queryForObject(sql, String.class, tableName);
+            }catch (DataAccessException ignored){
+
+            }
+            if(key.isEmpty()){
+                insertSql = SteerableJdbcTemplate.preparedInsertSql(tableName, struct, assemblingInsert);
+            } else {
+                String hint = "/*+IGNORE_ROW_ON_DUPKEY_INDEX(" + tableName + " " + key +")*/";
+                insertSql = SteerableJdbcTemplate.preparedHintInsertSql(tableName, struct, assemblingInsert, hint);
+            }
+        } else {
+            insertSql = SteerableJdbcTemplate.preparedInsertSql(tableName, struct, assemblingInsert);
+        }
+        return this;
     }
 
     public SteerableInsert preparedUpdateSql(){

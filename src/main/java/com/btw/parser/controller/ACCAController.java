@@ -19,16 +19,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ACCAController {
 
     @Autowired
-    private IDpOpraService dDpOpraService;
+    private DDpOpraService dDpOpraService;
 
     @Autowired
-    private IIpOpraService dIpOpraService;
+    private DIpOpraService dIpOpraService;
 
     @Autowired
-    private IDpPraService dDpPraService;
+    private DDpPraService dDpPraService;
 
     @Autowired
-    private IIpPraService dIpPraService;
+    private DIpPraService dIpPraService;
 
     @Autowired
     private DDpUplService dDpUplService;

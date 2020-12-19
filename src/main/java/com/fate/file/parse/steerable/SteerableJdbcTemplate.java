@@ -50,6 +50,10 @@ public final class SteerableJdbcTemplate {
     }
 
     public static String preparedInsertSql(String tableName, Map<String, FieldSpecification> struct, List<String> assemblingField){
+        return  preparedHintInsertSql(tableName, struct, assemblingField, "");
+    }
+
+    public static String preparedHintInsertSql(String tableName, Map<String, FieldSpecification> struct, List<String> assemblingField, String hint){
         Collection<FieldSpecification> fieldSpecifications = struct.values();
         int k = 0;
         StringBuilder colBuilder = new StringBuilder();
@@ -65,7 +69,7 @@ public final class SteerableJdbcTemplate {
             valBuilder.append(preparedWildcard(field));
             k++;
         }
-        return  "insert into " + tableName + " ( " + colBuilder + " ) " + " values (" + valBuilder + " ) ";
+        return  "insert " + hint + " into " + tableName + " ( " + colBuilder + " ) " + " values (" + valBuilder + " ) ";
     }
 
     public static String preparedUpdateSql(String tableName, Map<String, FieldSpecification> struct, List<String> assemblingField){
@@ -100,6 +104,7 @@ public final class SteerableJdbcTemplate {
     private static String preparedSetValue(FieldSpecification field){
         return field.getCol() + " = " + preparedWildcard(field);
     }
+
     private static String preparedWildcard(FieldSpecification field){
         if(FieldType.D.compareTo(field.getType())){
             return " to_date(? , '" + field.getDf() + "') ";

@@ -5,25 +5,17 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by ydc on 2020/7/15.
  */
 public class LineClassifyReaderHandler extends ReaderHandler {
 
-    private LineClassifier lineClassifier = new LineClassifier() {
-        @Override
-        public String[] keys() {
-            return new String[0];
-        }
-
-        @Override
-        public String classify(String line, int lineNo, String... keys) {
-            return line;
-        }
-    };
+    private LineClassifier lineClassifier;
 
     public LineClassifyReaderHandler() {
+        lineClassifier = new LineClassifier() {};
     }
 
     public LineClassifyReaderHandler(LineClassifier lineClassifier) {
@@ -63,10 +55,11 @@ public class LineClassifyReaderHandler extends ReaderHandler {
 
     /**
      * release IO
-     * @param bufferWriterMap
+     * @param bufferWriterMap split io
      */
     private static void closeBufferedWriter(Map<String, BufferedWriter> bufferWriterMap) {
-        for (String key : bufferWriterMap.keySet()) {
+        Set<String> keys = bufferWriterMap.keySet();
+        for (String key : keys) {
             closeBufferedWriter(bufferWriterMap.get(key));
         }
     }
@@ -99,7 +92,7 @@ public class LineClassifyReaderHandler extends ReaderHandler {
      */
     private static String makeUnzipPath(String unzipDir, String unzipPrefix, String fileName, String extension) {
         String path = unzipDir + File.separator + unzipPrefix + fileName;
-        if (extension == null || "".equals(extension)) {
+        if (extension == null || extension.isEmpty()) {
             return path;
         } else {
             return path + "." + extension;
@@ -113,7 +106,9 @@ public class LineClassifyReaderHandler extends ReaderHandler {
          *
          * @return context keys
          */
-        String[] keys();
+        default String[] keys() {
+            return new String[0];
+        };
 
         /**
          * classify line to corresponding structure
@@ -123,6 +118,8 @@ public class LineClassifyReaderHandler extends ReaderHandler {
          * @param keys   is context type
          * @return context key
          */
-        String classify(String line, int lineNo, String... keys);
+        default String classify(String line, int lineNo, String... keys){
+            return line;
+        };
     }
 }
